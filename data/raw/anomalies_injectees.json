@@ -1,0 +1,549 @@
+{
+  "graine": 2026,
+  "lignes_totales": 1010,
+  "transactions_de_base": 1000,
+  "anomalies_rejetees_attendues": 64,
+  "anomalies_corrigeables": 26,
+  "detail": [
+    {
+      "ligne": 4,
+      "anomalie": "VIREMENT_SANS_DESTINATION",
+      "motif_attendu": "DESTINATION_MANQUANTE",
+      "reference_originale": "TXN-000004"
+    },
+    {
+      "ligne": 13,
+      "anomalie": "DATE_FORMAT_FRANCAIS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000013"
+    },
+    {
+      "ligne": 20,
+      "anomalie": "MONTANT_ZERO",
+      "motif_attendu": "MONTANT_NUL",
+      "reference_originale": "TXN-000020"
+    },
+    {
+      "ligne": 21,
+      "anomalie": "REFERENCE_MAL_FORMEE",
+      "motif_attendu": "REFERENCE_INVALIDE",
+      "reference_originale": "TXN-000021"
+    },
+    {
+      "ligne": 27,
+      "anomalie": "REFERENCE_MAL_FORMEE",
+      "motif_attendu": "REFERENCE_INVALIDE",
+      "reference_originale": "TXN-000027"
+    },
+    {
+      "ligne": 40,
+      "anomalie": "COMPTE_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000040"
+    },
+    {
+      "ligne": 41,
+      "anomalie": "DATE_IMPOSSIBLE",
+      "motif_attendu": "DATE_INVALIDE",
+      "reference_originale": "TXN-000041"
+    },
+    {
+      "ligne": 53,
+      "anomalie": "MONTANT_VIDE",
+      "motif_attendu": "MONTANT_MANQUANT",
+      "reference_originale": "TXN-000053"
+    },
+    {
+      "ligne": 56,
+      "anomalie": "COMPTE_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000056"
+    },
+    {
+      "ligne": 70,
+      "anomalie": "COMPTE_SOURCE_VIDE",
+      "motif_attendu": "COMPTE_SOURCE_MANQUANT",
+      "reference_originale": "TXN-000070"
+    },
+    {
+      "ligne": 115,
+      "anomalie": "MONTANT_ZERO",
+      "motif_attendu": "MONTANT_NUL",
+      "reference_originale": "TXN-000115"
+    },
+    {
+      "ligne": 136,
+      "anomalie": "COMPTE_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000136"
+    },
+    {
+      "ligne": 143,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000143"
+    },
+    {
+      "ligne": 147,
+      "anomalie": "MONTANT_NEGATIF",
+      "motif_attendu": "MONTANT_NEGATIF",
+      "reference_originale": "TXN-000147"
+    },
+    {
+      "ligne": 179,
+      "anomalie": "TYPE_INCONNU",
+      "motif_attendu": "TYPE_INVALIDE",
+      "reference_originale": "TXN-000179"
+    },
+    {
+      "ligne": 208,
+      "anomalie": "DEVISE_INCONNUE",
+      "motif_attendu": "DEVISE_INVALIDE",
+      "reference_originale": "TXN-000208"
+    },
+    {
+      "ligne": 222,
+      "anomalie": "MONTANT_TEXTE",
+      "motif_attendu": "MONTANT_NON_NUMERIQUE",
+      "reference_originale": "TXN-000222"
+    },
+    {
+      "ligne": 239,
+      "anomalie": "DATE_IMPOSSIBLE",
+      "motif_attendu": "DATE_INVALIDE",
+      "reference_originale": "TXN-000239"
+    },
+    {
+      "ligne": 245,
+      "anomalie": "MONTANT_VIRGULE_DECIMALE",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000245"
+    },
+    {
+      "ligne": 253,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000253"
+    },
+    {
+      "ligne": 260,
+      "anomalie": "CANAL_INCONNU",
+      "motif_attendu": "CANAL_INVALIDE",
+      "reference_originale": "TXN-000260"
+    },
+    {
+      "ligne": 261,
+      "anomalie": "DATE_VIDE",
+      "motif_attendu": "DATE_MANQUANTE",
+      "reference_originale": "TXN-000261"
+    },
+    {
+      "ligne": 277,
+      "anomalie": "REFERENCE_VIDE",
+      "motif_attendu": "REFERENCE_MANQUANTE",
+      "reference_originale": "TXN-000277"
+    },
+    {
+      "ligne": 288,
+      "anomalie": "DESTINATION_MAL_FORMEE",
+      "motif_attendu": "DESTINATION_INVALIDE",
+      "reference_originale": "TXN-000288"
+    },
+    {
+      "ligne": 294,
+      "anomalie": "MONTANT_VIRGULE_DECIMALE",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000294"
+    },
+    {
+      "ligne": 302,
+      "anomalie": "CANAL_INCONNU",
+      "motif_attendu": "CANAL_INVALIDE",
+      "reference_originale": "TXN-000302"
+    },
+    {
+      "ligne": 313,
+      "anomalie": "VIREMENT_VERS_SOI",
+      "motif_attendu": "COMPTES_IDENTIQUES",
+      "reference_originale": "TXN-000313"
+    },
+    {
+      "ligne": 322,
+      "anomalie": "MONTANT_VIDE",
+      "motif_attendu": "MONTANT_MANQUANT",
+      "reference_originale": "TXN-000322"
+    },
+    {
+      "ligne": 340,
+      "anomalie": "DATE_FORMAT_FRANCAIS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000340"
+    },
+    {
+      "ligne": 343,
+      "anomalie": "DATE_IMPOSSIBLE",
+      "motif_attendu": "DATE_INVALIDE",
+      "reference_originale": "TXN-000343"
+    },
+    {
+      "ligne": 344,
+      "anomalie": "MONTANT_SEPARATEUR_MILLIERS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000344"
+    },
+    {
+      "ligne": 360,
+      "anomalie": "DATE_IMPOSSIBLE",
+      "motif_attendu": "DATE_INVALIDE",
+      "reference_originale": "TXN-000360"
+    },
+    {
+      "ligne": 364,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000216"
+    },
+    {
+      "ligne": 392,
+      "anomalie": "DATE_FORMAT_FRANCAIS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000391"
+    },
+    {
+      "ligne": 393,
+      "anomalie": "REFERENCE_VIDE",
+      "motif_attendu": "REFERENCE_MANQUANTE",
+      "reference_originale": "TXN-000392"
+    },
+    {
+      "ligne": 398,
+      "anomalie": "MONTANT_SEPARATEUR_MILLIERS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000397"
+    },
+    {
+      "ligne": 404,
+      "anomalie": "MONTANT_ZERO",
+      "motif_attendu": "MONTANT_NUL",
+      "reference_originale": "TXN-000403"
+    },
+    {
+      "ligne": 424,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000199"
+    },
+    {
+      "ligne": 453,
+      "anomalie": "MONTANT_VIRGULE_DECIMALE",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000451"
+    },
+    {
+      "ligne": 457,
+      "anomalie": "STATUT_CANAL_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000455"
+    },
+    {
+      "ligne": 461,
+      "anomalie": "DATE_VIDE",
+      "motif_attendu": "DATE_MANQUANTE",
+      "reference_originale": "TXN-000459"
+    },
+    {
+      "ligne": 499,
+      "anomalie": "DESTINATION_MAL_FORMEE",
+      "motif_attendu": "DESTINATION_INVALIDE",
+      "reference_originale": "TXN-000497"
+    },
+    {
+      "ligne": 502,
+      "anomalie": "REFERENCE_VIDE",
+      "motif_attendu": "REFERENCE_MANQUANTE",
+      "reference_originale": "TXN-000500"
+    },
+    {
+      "ligne": 507,
+      "anomalie": "COMPTE_SOURCE_MAL_FORME",
+      "motif_attendu": "COMPTE_SOURCE_INVALIDE",
+      "reference_originale": "TXN-000505"
+    },
+    {
+      "ligne": 513,
+      "anomalie": "DATE_FORMAT_FRANCAIS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000511"
+    },
+    {
+      "ligne": 515,
+      "anomalie": "VIREMENT_VERS_SOI",
+      "motif_attendu": "COMPTES_IDENTIQUES",
+      "reference_originale": "TXN-000513"
+    },
+    {
+      "ligne": 524,
+      "anomalie": "COMPTE_SOURCE_VIDE",
+      "motif_attendu": "COMPTE_SOURCE_MANQUANT",
+      "reference_originale": "TXN-000522"
+    },
+    {
+      "ligne": 534,
+      "anomalie": "REFERENCE_MAL_FORMEE",
+      "motif_attendu": "REFERENCE_INVALIDE",
+      "reference_originale": "TXN-000532"
+    },
+    {
+      "ligne": 535,
+      "anomalie": "DATE_VIDE",
+      "motif_attendu": "DATE_MANQUANTE",
+      "reference_originale": "TXN-000533"
+    },
+    {
+      "ligne": 545,
+      "anomalie": "VIREMENT_SANS_DESTINATION",
+      "motif_attendu": "DESTINATION_MANQUANTE",
+      "reference_originale": "TXN-000543"
+    },
+    {
+      "ligne": 555,
+      "anomalie": "STATUT_CANAL_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000553"
+    },
+    {
+      "ligne": 575,
+      "anomalie": "MONTANT_VIDE",
+      "motif_attendu": "MONTANT_MANQUANT",
+      "reference_originale": "TXN-000573"
+    },
+    {
+      "ligne": 613,
+      "anomalie": "TYPE_INCONNU",
+      "motif_attendu": "TYPE_INVALIDE",
+      "reference_originale": "TXN-000611"
+    },
+    {
+      "ligne": 614,
+      "anomalie": "MONTANT_TEXTE",
+      "motif_attendu": "MONTANT_NON_NUMERIQUE",
+      "reference_originale": "TXN-000612"
+    },
+    {
+      "ligne": 631,
+      "anomalie": "TYPE_INCONNU",
+      "motif_attendu": "TYPE_INVALIDE",
+      "reference_originale": "TXN-000629"
+    },
+    {
+      "ligne": 647,
+      "anomalie": "TYPE_INCONNU",
+      "motif_attendu": "TYPE_INVALIDE",
+      "reference_originale": "TXN-000645"
+    },
+    {
+      "ligne": 654,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000652"
+    },
+    {
+      "ligne": 677,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000333"
+    },
+    {
+      "ligne": 680,
+      "anomalie": "DEVISE_INCONNUE",
+      "motif_attendu": "DEVISE_INVALIDE",
+      "reference_originale": "TXN-000677"
+    },
+    {
+      "ligne": 682,
+      "anomalie": "MONTANT_NEGATIF",
+      "motif_attendu": "MONTANT_NEGATIF",
+      "reference_originale": "TXN-000679"
+    },
+    {
+      "ligne": 689,
+      "anomalie": "STATUT_CANAL_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000686"
+    },
+    {
+      "ligne": 702,
+      "anomalie": "STATUT_INCONNU",
+      "motif_attendu": "STATUT_INVALIDE",
+      "reference_originale": "TXN-000699"
+    },
+    {
+      "ligne": 707,
+      "anomalie": "COMPTE_MINUSCULES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000704"
+    },
+    {
+      "ligne": 725,
+      "anomalie": "COMPTE_SOURCE_MAL_FORME",
+      "motif_attendu": "COMPTE_SOURCE_INVALIDE",
+      "reference_originale": "TXN-000722"
+    },
+    {
+      "ligne": 735,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000133"
+    },
+    {
+      "ligne": 745,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000741"
+    },
+    {
+      "ligne": 748,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000744"
+    },
+    {
+      "ligne": 750,
+      "anomalie": "MONTANT_SEPARATEUR_MILLIERS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000746"
+    },
+    {
+      "ligne": 754,
+      "anomalie": "VIREMENT_SANS_DESTINATION",
+      "motif_attendu": "DESTINATION_MANQUANTE",
+      "reference_originale": "TXN-000750"
+    },
+    {
+      "ligne": 788,
+      "anomalie": "DEVISE_INCONNUE",
+      "motif_attendu": "DEVISE_INVALIDE",
+      "reference_originale": "TXN-000784"
+    },
+    {
+      "ligne": 796,
+      "anomalie": "MONTANT_NEGATIF",
+      "motif_attendu": "MONTANT_NEGATIF",
+      "reference_originale": "TXN-000792"
+    },
+    {
+      "ligne": 797,
+      "anomalie": "STATUT_INCONNU",
+      "motif_attendu": "STATUT_INVALIDE",
+      "reference_originale": "TXN-000793"
+    },
+    {
+      "ligne": 799,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000382"
+    },
+    {
+      "ligne": 804,
+      "anomalie": "COMPTE_SOURCE_MAL_FORME",
+      "motif_attendu": "COMPTE_SOURCE_INVALIDE",
+      "reference_originale": "TXN-000799"
+    },
+    {
+      "ligne": 812,
+      "anomalie": "DOUBLON_AVEC_VARIANTE",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000789"
+    },
+    {
+      "ligne": 837,
+      "anomalie": "DATE_FORMAT_FRANCAIS",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000831"
+    },
+    {
+      "ligne": 845,
+      "anomalie": "MONTANT_NEGATIF",
+      "motif_attendu": "MONTANT_NEGATIF",
+      "reference_originale": "TXN-000839"
+    },
+    {
+      "ligne": 879,
+      "anomalie": "MONTANT_TEXTE",
+      "motif_attendu": "MONTANT_NON_NUMERIQUE",
+      "reference_originale": "TXN-000873"
+    },
+    {
+      "ligne": 882,
+      "anomalie": "MONTANT_NEGATIF",
+      "motif_attendu": "MONTANT_NEGATIF",
+      "reference_originale": "TXN-000876"
+    },
+    {
+      "ligne": 905,
+      "anomalie": "COMPTE_SOURCE_VIDE",
+      "motif_attendu": "COMPTE_SOURCE_MANQUANT",
+      "reference_originale": "TXN-000899"
+    },
+    {
+      "ligne": 910,
+      "anomalie": "MONTANT_VIRGULE_DECIMALE",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000904"
+    },
+    {
+      "ligne": 911,
+      "anomalie": "MONTANT_VIRGULE_DECIMALE",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-000905"
+    },
+    {
+      "ligne": 913,
+      "anomalie": "REFERENCE_VIDE",
+      "motif_attendu": "REFERENCE_MANQUANTE",
+      "reference_originale": "TXN-000907"
+    },
+    {
+      "ligne": 925,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000695"
+    },
+    {
+      "ligne": 928,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000915"
+    },
+    {
+      "ligne": 956,
+      "anomalie": "COMPTE_SOURCE_VIDE",
+      "motif_attendu": "COMPTE_SOURCE_MANQUANT",
+      "reference_originale": "TXN-000948"
+    },
+    {
+      "ligne": 984,
+      "anomalie": "DOUBLON_EXACT",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000934"
+    },
+    {
+      "ligne": 992,
+      "anomalie": "STATUT_INCONNU",
+      "motif_attendu": "STATUT_INVALIDE",
+      "reference_originale": "TXN-000983"
+    },
+    {
+      "ligne": 993,
+      "anomalie": "DOUBLON_AVEC_VARIANTE",
+      "motif_attendu": "DOUBLON_REFERENCE",
+      "reference_originale": "TXN-000596"
+    },
+    {
+      "ligne": 1010,
+      "anomalie": "TYPE_MINUSCULES_ESPACES",
+      "motif_attendu": "OK",
+      "reference_originale": "TXN-001000"
+    }
+  ]
+}
