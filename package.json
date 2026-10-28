@@ -1,0 +1,19 @@
+{
+  "name": "groupe5-api-transactions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IBAM Master 1 SIE 2026 - Groupe 5 - Theme 6 : API REST de transactions (Express.js, KNIME, Prometheus/Grafana)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "data:generate": "node data/scripts/generate-transactions.js",
+    "data:reference": "node data/scripts/reference-etl.js",
+    "data:compare": "node data/scripts/compare-outputs.js",
+    "test:data": "node --test \"data/tests/*.test.js\"",
+    "test:e2e": "node --test --test-concurrency=1 \"tests/e2e/*.test.js\"",
+    "check": "node scripts/verifier-projet.js",
+    "demo:traffic": "node scripts/generer-trafic.js"
+  }
+}

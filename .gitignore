@@ -1,0 +1,21 @@
+node_modules/
+coverage/
+.env
+*.log
+npm-debug.log*
+
+# Sorties du workflow KNIME : régénérées à chaque exécution.
+# Retirer ces lignes si vous voulez versionner une exécution de référence.
+data/processed/*.csv
+
+# KNIME : espace de travail local (on versionne uniquement l'export .knwf)
+knime/workspace/
+.metadata/
+
+# Systèmes / éditeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+~$*.pptx
