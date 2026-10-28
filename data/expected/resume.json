@@ -1,0 +1,26 @@
+{
+  "fichier_source": "transactions_brutes.csv",
+  "lignes_lues": 1010,
+  "lignes_valides": 946,
+  "lignes_rejetees": 64,
+  "rejets_par_motif": {
+    "CANAL_INVALIDE": 2,
+    "COMPTE_SOURCE_INVALIDE": 3,
+    "COMPTE_SOURCE_MANQUANT": 4,
+    "COMPTES_IDENTIQUES": 2,
+    "DATE_INVALIDE": 4,
+    "DATE_MANQUANTE": 3,
+    "DESTINATION_INVALIDE": 2,
+    "DESTINATION_MANQUANTE": 3,
+    "DEVISE_INVALIDE": 3,
+    "DOUBLON_REFERENCE": 10,
+    "MONTANT_MANQUANT": 3,
+    "MONTANT_NEGATIF": 5,
+    "MONTANT_NON_NUMERIQUE": 3,
+    "MONTANT_NUL": 3,
+    "REFERENCE_INVALIDE": 3,
+    "REFERENCE_MANQUANTE": 4,
+    "STATUT_INVALIDE": 3,
+    "TYPE_INVALIDE": 4
+  }
+}
