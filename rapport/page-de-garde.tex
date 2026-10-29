@@ -1,41 +1,62 @@
-% Page de garde.
+% Page de garde (modèle des rapports IBAM).
 \begin{titlepage}
-  \centering
-  {\large\bfseries Université Joseph Ki-Zerbo\par}
-  {\large Institut Burkinabè des Arts et Métiers (IBAM)\par}
+\thispagestyle{empty}
+\begin{center}
+\vspace*{0.2cm}
+
+{\sansfont\bfseries\Large UNIVERSITÉ JOSEPH KI-ZERBO\par}
+{\sansfont\bfseries\normalsize (UJKZ)\par}
+
+\vspace{0.25cm}
+{\sansfont\bfseries\LARGE $\bigstar$\quad$\bigstar$\quad$\bigstar$\quad$\bigstar$\quad$\bigstar$\par}
+\vspace{0.25cm}
+
+{\sansfont\bfseries\Large INSTITUT BURKINABÈ DES ARTS ET MÉTIERS\par}
+{\sansfont\bfseries\normalsize (IBAM)\par}
+
+\vspace{0.6cm}
+\includegraphics[width=3.4cm]{figures/logo_ujkz.png}
+
+\vspace{0.35cm}
+{\sansfont\itshape Cours : Développement à base de composants et services Web\par}
+
+\vspace{0.9cm}
+\fcolorbox{bluedark}{white}{\parbox{14cm}{\centering\vspace{0.25cm}
+  {\sansfont\bfseries\Large\color{bluedark} PROJET : API REST DE TRANSACTIONS BANCAIRES\par}
   \vspace{0.3cm}
-  {Master 1 Systèmes d'Information et Entreprise (SIE)\par}
-  {Développement à base de composants et services Web\par}
-  {Enseignant : \afaire{nom de l'enseignant}\par}
+  {\sansfont\bfseries\large Express.js \textbullet{} KNIME \textbullet{} Prometheus \textbullet{} Grafana\par}
+  \vspace{0.2cm}
+  {\sansfont\normalsize Données bancaires fictives : contrôle, API REST et supervision\par}
+  \vspace{0.15cm}
+  {\sansfont\normalsize Thème 6 \textbullet{} Groupe 5\par}\vspace{0.25cm}
+}}
+\vspace{1cm}
 
-  \vspace{2.2cm}
-  {\color{bleuibam}\rule{\linewidth}{1pt}\par}
-  \vspace{0.4cm}
-  {\Huge\bfseries\color{bleuibam} API REST de transactions\par}
-  \vspace{0.3cm}
-  {\Large Données bancaires fictives contrôlées par KNIME,\\ exposées par Express.js et supervisées par Prometheus et Grafana\par}
-  \vspace{0.4cm}
-  {\color{bleuibam}\rule{\linewidth}{1pt}\par}
-  \vspace{0.5cm}
-  {\large Rapport de projet, thème 6\par}
+{\sansfont\bfseries Filière : Master 1 SIE\par}
+\vspace{0.6cm}
 
-  \vspace{2cm}
-  {\large\bfseries Groupe 5\par}
-  \vspace{0.3cm}
-  \begin{tabular}{ll}
-    \toprule
-    Membre & Rôle \\
-    \midrule
-    BANDE Hamidou & Données, base PostgreSQL, Docker, intégration \\
-    SOMBIE Roseline & Workflow ETL KNIME \\
-    KOUMTOUBRE Davy & API REST Express.js \\
-    BADO Lionel & Supervision Prometheus/Grafana, tests de bout en bout \\
-    \bottomrule
-  \end{tabular}
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+{\sansfont\bfseries Présenté par\par}
+\vspace{0.3cm}
+{\sansfont BANDE Hamidou\par}
+{\sansfont SOMBIE Roseline\par}
+{\sansfont KOUMTOUBRE Davy\par}
+{\sansfont BADO Lionel\par}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.45\textwidth}
+\centering
+{\sansfont\bfseries Encadré par\par}
+\vspace{0.3cm}
+{\sansfont \afaire{nom de l'enseignant}\par}
+\end{minipage}
 
-  \vspace{1cm}
-  {Dépôt : \url{https://github.com/BANDE-Hamidou/API_REST_Transaction}\par}
+\vspace{1cm}
+{\sansfont\small Dépôt : \url{https://github.com/BANDE-Hamidou/API_REST_Transaction}\par}
 
-  \vfill
-  {Année universitaire 2026-2027\par}
+\vfill
+{\sansfont Année universitaire 2025\textendash 2026\par}
+\vspace{0.4cm}
+\end{center}
 \end{titlepage}
