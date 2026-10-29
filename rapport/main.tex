@@ -1,0 +1,40 @@
+% =============================================================================
+% Rapport du projet « API REST de transactions » : Groupe 5 SIE, thème 6.
+% Compilation (depuis le dossier rapport/) :
+%   tectonic main.tex              (compilateur autonome, recommandé)
+%   latexmk -pdf main.tex          (TeX Live ou MiKTeX)
+%   ou importer le dossier rapport/ dans Overleaf (compilateur pdfLaTeX).
+% Consolidation : BANDE Hamidou. Chaque chapitre indique son rédacteur et son
+% relecteur. Les captures vont dans figures/ (voir figures/LISEZMOI.txt).
+% Un chapitre absent est simplement ignoré : le rapport compile à tout moment.
+% =============================================================================
+\documentclass[11pt,a4paper]{report}
+\input{preambule}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\input{page-de-garde}
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+\input{sigles}
+
+\cleardoublepage
+\pagenumbering{arabic}
+\InputIfFileExists{chapitres/01-contexte.tex}{}{}
+\InputIfFileExists{chapitres/02-architecture.tex}{}{}
+\InputIfFileExists{chapitres/03-donnees.tex}{}{}
+\InputIfFileExists{chapitres/04-knime.tex}{}{}
+\InputIfFileExists{chapitres/05-api.tex}{}{}
+\InputIfFileExists{chapitres/06-supervision.tex}{}{}
+\InputIfFileExists{chapitres/07-tests.tex}{}{}
+\InputIfFileExists{chapitres/08-installation.tex}{}{}
+\InputIfFileExists{chapitres/09-limites.tex}{}{}
+\appendix
+\InputIfFileExists{chapitres/10-annexes.tex}{}{}
+
+\end{document}
