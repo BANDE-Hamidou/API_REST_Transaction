@@ -1,0 +1,60 @@
+% Rédaction : BANDE Hamidou ; relecture : KOUMTOUBRE Davy
+\chapter{Contexte et exigences}
+
+\section{Le sujet}
+Le thème 6 du projet \emph{Développement à base de composants et services Web} demande une
+API REST de transactions bancaires construite avec Express.js, alimentée par un workflow KNIME et
+supervisée par Prometheus et Grafana. L'enjeu n'est pas une seule technologie mais leur
+assemblage : chaque composant a un rôle distinct et doit pouvoir être remplacé ou testé seul.
+
+Notre chaîne fait cinq choses :
+\begin{enumerate}
+  \item \textbf{générer} 1010 transactions bancaires fictives, dont des erreurs injectées exprès ;
+  \item \textbf{contrôler et transformer} ces données avec KNIME : 946 lignes valides, 64 rejetées avec leur motif ;
+  \item \textbf{charger} le résultat dans PostgreSQL, sans jamais créer de doublon ;
+  \item \textbf{exposer} les transactions par une API REST filtrable, paginée et modifiable ;
+  \item \textbf{mesurer} les requêtes, les erreurs et les temps de réponse de l'API.
+\end{enumerate}
+
+\section{Exigences de l'exercice 6}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+\textbf{N°} & \textbf{Travail demandé (énoncé)} & \textbf{Chapitre} \\
+\midrule
+E1 & Générer des transactions bancaires fictives & \ref{chap:donnees} \\
+E2 & Construire un workflow KNIME pour contrôler et transformer les données & \ref{chap:knime} \\
+E3 & Développer l'API REST et ses filtres & \ref{chap:api} \\
+E4 & Exposer les métriques de requêtes, d'erreurs et de temps de réponse & \ref{chap:supervision} \\
+E5 & Configurer Prometheus et Grafana & \ref{chap:supervision} \\
+E6 & Utiliser Cypress si une interface web est fournie ; sinon, un outil adapté aux tests d'API & \ref{chap:tests} \\
+\bottomrule
+\end{tabularx}
+\caption{Exigences de l'exercice 6 et chapitre qui y répond}
+\end{table}
+
+\section{Exigences communes à tous les groupes}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+\textbf{N°} & \textbf{Exigence} \\
+\midrule
+G1 & Dépôt Git public : code et dépendances, scripts de création des bases, configurations, workflows et contrats d'API, README (architecture, prérequis, installation), tests et résultats attendus, présentation PowerPoint. \\
+G2 & Installation reproductible sur une machine neuve ; Docker Compose pour les services compatibles ; procédure distincte pour les outils à installation particulière (KNIME). \\
+G3 & Au minimum un scénario fonctionnel réussi et un test de bout en bout de la chaîne principale. \\
+\bottomrule
+\end{tabularx}
+\caption{Exigences communes}
+\end{table}
+
+\section{Hypothèses retenues}
+L'énoncé laisse plusieurs points ouverts. Nos choix, justifiés au chapitre~\ref{chap:architecture} :
+\begin{itemize}
+  \item la base n'est pas imposée : nous utilisons \textbf{PostgreSQL 16} ;
+  \item « l'API et ses filtres » : consultation filtrée \emph{et} création, modification, suppression ;
+  \item KNIME écrit deux fichiers CSV, vérifiés puis chargés par un chargeur idempotent, plutôt que d'écrire directement dans la base ;
+  \item aucune interface web n'est demandée : les tests utilisent Jest, Supertest, Postman (Newman) et un test de bout en bout, pas Cypress ;
+  \item l'authentification est hors périmètre (piste d'amélioration au chapitre~\ref{chap:limites}).
+\end{itemize}
