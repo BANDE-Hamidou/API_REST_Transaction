@@ -1,0 +1,152 @@
+% Rédaction : SOMBIE Roseline ; relecture : BANDE Hamidou
+\chapter{Workflow KNIME de contrôle et de transformation}\label{chap:knime}
+
+\section{Rôle dans la chaîne}
+Le workflow KNIME répond à l'exigence E2 : contrôler et transformer les données brutes avant leur
+chargement. Il lit \texttt{data/raw/transactions\_brutes.csv} (1010 lignes) et écrit deux fichiers
+dans \texttt{data/processed/} :
+\begin{itemize}
+  \item \texttt{transactions\_valides.csv} : 946 lignes, plus la colonne \texttt{categorie\_montant} ;
+  \item \texttt{transactions\_rejetees.csv} : 64 lignes, chacune avec son \texttt{motif\_rejet}.
+\end{itemize}
+KNIME écrit des CSV plutôt que d'écrire directement dans PostgreSQL. Aucun pilote JDBC n'est à
+configurer sur le poste, et la sortie peut être vérifiée automatiquement \emph{avant} d'être chargée
+(chapitre~\ref{chap:donnees}).
+
+Le workflow a été construit avec KNIME Analytics Platform 5.12, sans extension, en suivant la
+spécification \texttt{docs/KNIME\_WORKFLOW.md}. Il est exporté dans \texttt{knime/transactions\_etl.knwf}.
+
+\capture{knime_01_workflow.png}{Le workflow complet : 23 nœuds exécutés (feux verts)}{fig:knime-workflow}
+
+\section{Les étapes du workflow}
+Les 23 nœuds forment six étapes. Chaque nœud porte son numéro dans son nom, pour que la capture se
+lise dans l'ordre.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\textbf{Nœuds} & \textbf{Étape} & \textbf{Ce qui est fait} \\
+\midrule
+1 & Lire & CSV Reader ; \textbf{toutes les colonnes forcées en texte} (String) \\
+2--8 & Normaliser & codes en majuscules sans espaces ; montant : espaces retirés, virgule $\rightarrow$ point ; date française \texttt{JJ/MM/AAAA hh:mm:ss} $\rightarrow$ ISO \texttt{AAAA-MM-JJThh:mm:ss} \\
+9--10 & Contrôler & Rule Engine : une colonne \texttt{motif\_rejet} ; séparation des lignes \texttt{OK} et des rejets \\
+11--13 & Dédoublonner & doublons sur \texttt{reference} seule ; la première occurrence est gardée, les suivantes reçoivent \texttt{DOUBLON\_REFERENCE} \\
+14--18 & Enrichir et écrire & montant converti en nombre ; \texttt{categorie\_montant} ; ordre des colonnes ; écriture des valides \\
+19--23 & Écrire les rejets & réunion des deux sorties de rejet ; écriture ; comptage par motif \\
+\bottomrule
+\end{tabularx}
+\caption{Les six étapes du workflow KNIME}
+\label{tab:knime-etapes}
+\end{table}
+
+\paragraph{Pourquoi tout lire en texte.} Si le CSV Reader devine les types, il lit \texttt{montant}
+comme un nombre : les valeurs \texttt{"mille"} ou \texttt{"12500,00"} deviennent des valeurs
+manquantes. On ne pourrait plus dire \emph{pourquoi} la ligne est fausse. Le montant n'est converti
+en nombre qu'au nœud 15, une fois la ligne contrôlée.
+
+\paragraph{Corriger ou rejeter.} Une anomalie dont l'intention est certaine est corrigée : minuscules,
+espaces, virgule décimale, séparateur de milliers, date au format français. Les 26 anomalies de ce
+type sont acceptées après correction. Une donnée absente, fausse ou ambiguë est rejetée avec un motif.
+
+\section{Les règles de contrôle (nœud 9)}
+Le nœud 9 est le cœur du workflow. Ses 30 règles sont évaluées dans l'ordre et la première règle
+vraie donne le motif. Elles sont la traduction exacte de la fonction \texttt{motifRejet} de
+\texttt{data/scripts/rules.js}, dans le même ordre : c'est ce qui permet de comparer KNIME à l'ETL
+de référence.
+
+\begin{lstlisting}[caption={Début des règles du nœud 9 (Rule Engine)}]
+MISSING $reference$ => "REFERENCE_MANQUANTE"
+$reference$ = "" => "REFERENCE_MANQUANTE"
+NOT $reference$ MATCHES "TXN-[0-9]{6}" => "REFERENCE_INVALIDE"
+...
+$montant$ LIKE "-*" => "MONTANT_NEGATIF"
+NOT $montant$ MATCHES "[0-9]+([.][0-9]{1,2})?" => "MONTANT_NON_NUMERIQUE"
+...
+$compte_destination$ = $compte_source$ => "COMPTES_IDENTIQUES"
+TRUE => "OK"
+\end{lstlisting}
+
+\capture{knime_02_noeud9.png}{Configuration du nœud 9 : les 30 règles de contrôle}{fig:knime-noeud9}
+
+\section{Résultat obtenu}
+Les points de contrôle intermédiaires ont tous été atteints :
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Nœud} & \textbf{Contrôle} & \textbf{Lignes} \\
+\midrule
+1 CSV Reader & lignes lues, 10 colonnes en texte & 1010 \\
+10 Séparation & sortie \texttt{OK} / rejets du nœud 9 & 956 / 54 \\
+13 Séparation & valides / doublons & 946 / 10 \\
+23 GroupBy & motifs différents (total 64) & 18 \\
+\bottomrule
+\end{tabular}
+\caption{Points de contrôle du workflow (poste de SOMBIE, 29/10/2026)}
+\label{tab:knime-controles}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}lr@{\hspace{2.5em}}lr@{}}
+\toprule
+\textbf{Motif} & \textbf{Lignes} & \textbf{Motif} & \textbf{Lignes} \\
+\midrule
+DOUBLON\_REFERENCE & 10 & DATE\_INVALIDE & 4 \\
+MONTANT\_NEGATIF & 5 & REFERENCE\_MANQUANTE & 4 \\
+COMPTE\_SOURCE\_MANQUANT & 4 & TYPE\_INVALIDE & 4 \\
+COMPTE\_SOURCE\_INVALIDE & 3 & DATE\_MANQUANTE & 3 \\
+DESTINATION\_MANQUANTE & 3 & DEVISE\_INVALIDE & 3 \\
+MONTANT\_MANQUANT & 3 & MONTANT\_NON\_NUMERIQUE & 3 \\
+MONTANT\_NUL & 3 & REFERENCE\_INVALIDE & 3 \\
+STATUT\_INVALIDE & 3 & CANAL\_INVALIDE & 2 \\
+COMPTES\_IDENTIQUES & 2 & DESTINATION\_INVALIDE & 2 \\
+\midrule
+\multicolumn{3}{@{}l}{\textbf{Total des rejets} (54 anomalies + 10 doublons)} & \textbf{64} \\
+\bottomrule
+\end{tabular}
+\caption{Rejets par motif produits par KNIME}
+\label{tab:knime-motifs}
+\end{table}
+
+\capture{knime_03_rejets_par_motif.png}{Sortie du nœud 23 : 18 motifs de rejet, 64 lignes au total}{fig:knime-motifs}
+
+\section{Vérification automatique}
+La commande \texttt{npm run data:compare} compare la sortie de KNIME, ligne par ligne et champ par
+champ, au résultat de l'ETL de référence (\texttt{data/expected/}). Elle est obligatoire avant tout
+chargement.
+
+\begin{lstlisting}[caption={Vérification de la sortie KNIME}]
+$ npm run data:compare
+[comparaison] CONFORME : 946 valides, 64 rejetées, motifs identiques au résultat attendu.
+\end{lstlisting}
+
+\capture{knime_04_conforme.png}{La sortie de KNIME est conforme au résultat attendu}{fig:knime-conforme}
+
+Pour rejouer la vérification sur un autre poste, on importe \texttt{knime/transactions\_etl.knwf}
+dans KNIME, puis on adapte les chemins du CSV Reader (nœud 1) et des deux CSV Writer (nœuds 18 et 22).
+
+\section{Difficultés rencontrées}
+La construction a buté sur trois points. Aucun n'a demandé de modifier les règles : la règle du
+projet est de corriger le workflow, jamais les règles, pour « faire passer » la comparaison.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}l X X@{}}
+\toprule
+\textbf{Nœud} & \textbf{Symptôme} & \textbf{Cause et correction} \\
+\midrule
+2 & 17 colonnes au lieu de 10 & le mode par défaut ajoute des colonnes suffixées \texttt{\_transformed} ; choisir \emph{Replace selected input columns} \\
+12 & règle en rouge & dans KNIME 5.12, la colonne de statut s'appelle \texttt{Duplicate Status} et non \texttt{duplicate-type-classifier} comme prévu ; insérer la colonne depuis la liste plutôt que la taper \\
+18 & le nœud refuse de s'exécuter & un port optionnel \emph{File System Connection} avait été ajouté par erreur et restait non relié ; le retirer \\
+\bottomrule
+\end{tabularx}
+\caption{Difficultés rencontrées lors de la construction du workflow}
+\label{tab:knime-difficultes}
+\end{table}
+
+La spécification \texttt{docs/KNIME\_WORKFLOW.md} reste la référence pour reconstruire le workflow
+sur un autre poste. Son tableau « écart $\rightarrow$ cause $\rightarrow$ correction » couvre les erreurs que la comparaison
+peut signaler.

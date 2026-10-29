@@ -1,0 +1,107 @@
+% Rédaction : SOMBIE Roseline ; relecture : BADO Lionel
+\chapter{Installation et reproductibilité}\label{chap:installation}
+
+\section{Objectif}
+L'énoncé demande une installation reproductible sur une machine neuve. Le guide
+\texttt{docs/INSTALLATION\_WINDOWS.md} décrit cette installation pas à pas, pour un débutant sous
+Windows 10 ou 11. Il faut compter 45 à 90 minutes la première fois, surtout pour les téléchargements.
+
+Deux familles d'outils sont installées différemment :
+\begin{itemize}
+  \item \textbf{les services} (PostgreSQL, API, Prometheus, Grafana) tournent dans Docker : une seule
+        commande les construit et les démarre, avec les mêmes versions sur tous les postes ;
+  \item \textbf{les applications de bureau} (Node.js, Git, Docker Desktop, KNIME) s'installent à la main.
+        KNIME n'est nécessaire que sur le poste chargé de l'ETL.
+\end{itemize}
+
+\section{Prérequis}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\textbf{Outil} & \textbf{Version} & \textbf{Vérification} \\
+\midrule
+Node.js & 22 LTS ou plus & \texttt{node -v} \\
+Git (avec Git Bash) & 2.x & \texttt{git --version} \\
+Docker Desktop (WSL 2) & Compose v2 & \texttt{docker compose version}, puis \texttt{docker run --rm hello-world} \\
+KNIME Analytics Platform & 5.x & s'ouvre ; poste ETL seulement \\
+\bottomrule
+\end{tabularx}
+\caption{Outils à installer sur le poste}
+\label{tab:prerequis}
+\end{table}
+
+Le script \texttt{scripts/verifier-prerequis.ps1} contrôle ces outils et les ports utilisés
+(5432, 3000, 9090, 3001). Un port déjà pris se change dans le fichier \texttt{.env}, sans toucher au code.
+
+\section{Les étapes}
+\begin{enumerate}
+  \item vérifier Node.js et Git ;
+  \item installer WSL 2 et Docker Desktop, puis attendre l'état \emph{Engine running} ;
+  \item cloner le dépôt et créer le fichier \texttt{.env} à partir de \texttt{.env.example} ;
+  \item lancer \texttt{scripts/verifier-prerequis.ps1} ;
+  \item démarrer la pile avec \texttt{scripts/demarrer.ps1} (environ 1,5~Go d'images au premier lancement) ;
+  \item vérifier chaque service : API, \texttt{/health/ready}, \texttt{/metrics}, cibles Prometheus, tableau de bord Grafana, tables PostgreSQL ;
+  \item sur le poste ETL, installer KNIME, importer le workflow et vérifier sa sortie avec \texttt{npm run data:compare} ;
+  \item charger les données avec \texttt{scripts/charger-donnees.ps1} ;
+  \item lancer tous les tests avec \texttt{scripts/tester-tout.ps1}.
+\end{enumerate}
+Chaque étape du guide donne le résultat attendu et un tableau « message d'erreur $\rightarrow$ cause
+$\rightarrow$ correction ». On ne passe à l'étape suivante que si le résultat attendu est obtenu.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}l X X@{}}
+\toprule
+\textbf{Besoin} & \textbf{Commande} & \textbf{Données} \\
+\midrule
+Arrêter & \texttt{scripts/arreter.ps1} & conservées \\
+Relancer & \texttt{scripts/demarrer.ps1} & conservées, pas de rechargement \\
+Tout remettre à zéro & \texttt{scripts/reinitialiser.ps1} & supprimées : recharger ensuite \\
+\bottomrule
+\end{tabularx}
+\caption{Arrêter, relancer, réinitialiser}
+\label{tab:cycle-vie}
+\end{table}
+
+\section{Pièges constatés sur les postes de l'équipe}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}X X@{}}
+\toprule
+\textbf{Symptôme} & \textbf{Cause et correction} \\
+\midrule
+\texttt{npm} échoue avec \texttt{Cannot find module \ldots jest.js} & chemin du projet contenant un espace, un accent ou \texttt{\&} ; utiliser un chemin simple comme \texttt{C:\textbackslash projets\textbackslash \ldots} \\
+\texttt{cd G:\textbackslash TPComposantWeb\textbackslash \ldots} : \emph{No such file or directory} dans Git Bash & Git Bash supprime les barres obliques inverses ; écrire \texttt{/g/TPComposantWeb/\ldots} \\
+L'export KNIME n'est pas dans le dépôt & KNIME propose par défaut le dossier personnel ; choisir \texttt{knime\textbackslash transactions\_etl.knwf} dans le dépôt \\
+Montants vides ou \texttt{?} dans KNIME & colonnes non forcées en texte dans le CSV Reader \\
+Le \emph{workspace} KNIME apparaît dans \texttt{git status} & le choisir hors du dépôt, par exemple \texttt{C:\textbackslash Users\textbackslash <nom>\textbackslash knime-workspace} \\
+\bottomrule
+\end{tabularx}
+\caption{Problèmes rencontrés et corrections}
+\label{tab:pieges-installation}
+\end{table}
+
+\section{Test sur un poste neuf}
+Le guide est validé en le suivant seul, dans un dossier vide, par un membre qui n'a écrit aucun
+fichier Docker. Chaque blocage rencontré est corrigé dans le guide lui-même.
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Étape du guide} & \textbf{Résultat} & \textbf{Remarque} \\
+\midrule
+1--2 Node.js, Git, Docker Desktop & \afaire{} & \\
+3--4 Clonage, prérequis & \afaire{} & \\
+5--6 Pile Docker et services & \afaire{} & \\
+7 KNIME et \texttt{data:compare} & CONFORME & 946 valides, 64 rejetées (chapitre~\ref{chap:knime}) \\
+8 Chargement & \afaire{} & \\
+9 Tests & \afaire{} & \\
+\bottomrule
+\end{tabular}
+\caption{Déroulé du test d'installation (poste de SOMBIE)}
+\label{tab:test-installation}
+\end{table}
+
+\afaire{Durée totale de l'installation et blocages corrigés dans le guide, après le test sur poste neuf.}
