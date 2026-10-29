@@ -1,0 +1,37 @@
+% Rédaction : KOUMTOUBRE Davy ; relecture : BADO Lionel
+\chapter{Limites et perspectives}\label{chap:limites}
+
+Le projet démontre une chaîne intégrée de traitement et d'exposition de transactions fictives.
+Il s'agit d'un livrable pédagogique, pas d'un système prêt à traiter des opérations bancaires
+réelles. Les limites suivantes doivent être prises en compte.
+
+\section{Périmètre fonctionnel et données}
+Les données sont entièrement synthétiques et produites par un générateur déterministe. Elles
+permettent de reproduire les tests, mais ne représentent ni la diversité ni les contraintes de
+confidentialité de données bancaires réelles. L'API ne réalise pas de mouvement de fonds : elle
+enregistre et expose des objets de transaction.
+
+Le workflow KNIME est conçu pour une exécution sur poste de travail et une production de fichiers
+CSV. Cette étape reste distincte de l'API et de Docker. Pour une exploitation régulière, il faudrait
+automatiser son exécution, superviser les fichiers produits et définir une stratégie de reprise en
+cas d'échec de l'ETL.
+
+\section{Sécurité et exploitation}
+L'API ne comporte pas d'authentification, d'autorisation par rôle ni de limitation de débit. Les
+services et identifiants fournis par défaut sont destinés au développement local. Avant toute
+exposition sur un réseau non maîtrisé, il faudrait ajouter une gestion d'identité (par exemple une
+clé d'API ou des jetons), protéger les secrets, configurer TLS et définir une politique d'accès
+minimale à PostgreSQL.
+
+Prometheus collecte les métriques et Grafana les présente, mais les règles d'alerte ne disposent
+pas d'un service de notification tel qu'Alertmanager. Les journaux sont consultables dans les
+sorties des conteneurs; ils ne sont pas centralisés ni conservés dans un système de recherche.
+La pile Docker Compose vise un seul poste et ne fournit ni haute disponibilité, ni sauvegarde
+automatisée, ni stratégie de déploiement multi-instance.
+
+\section{Évolutions possibles}
+Les suites naturelles sont l'automatisation du workflow KNIME, l'ajout d'une authentification et
+d'une autorisation adaptées, la gestion centralisée des secrets, les sauvegardes/restaurations
+testées, ainsi que l'envoi des alertes et la centralisation des journaux. Une mise en production
+nécessiterait également des tests de charge plus représentatifs, une politique de rétention des
+métriques et journaux, et une revue de sécurité de l'ensemble de la chaîne.
