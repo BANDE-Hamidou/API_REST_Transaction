@@ -1,0 +1,39 @@
+% Rédaction : BANDE Hamidou ; relecture : BADO Lionel
+\chapter{Annexes}
+
+\section{Contrat de données d'une transaction}
+\small
+\begin{longtable}{@{}p{3.9cm}p{3.6cm}p{7.2cm}@{}}
+\toprule
+\textbf{Champ} & \textbf{Format} & \textbf{Règle} \\
+\midrule
+\endhead
+\texttt{reference} & \texttt{TXN-} + 6 chiffres & obligatoire, unique \\
+\texttt{compte\_source} & \texttt{CPT} + 8 chiffres & obligatoire \\
+\texttt{compte\_destination} & \texttt{CPT} + 8 chiffres & obligatoire pour un virement ; différent du compte source \\
+\texttt{type} & énumération & \texttt{DEPOT}, \texttt{RETRAIT}, \texttt{VIREMENT}, \texttt{PAIEMENT} \\
+\texttt{montant} & nombre, 2 décimales & strictement positif \\
+\texttt{devise} & énumération & \texttt{XOF} (défaut), \texttt{EUR}, \texttt{USD} \\
+\texttt{date\_transaction} & \texttt{AAAA-MM-JJThh:mm:ss} & date réelle \\
+\texttt{statut} & énumération & \texttt{EFFECTUEE}, \texttt{EN\_ATTENTE}, \texttt{ANNULEE} \\
+\texttt{canal} & énumération & \texttt{GUICHET}, \texttt{GAB}, \texttt{MOBILE}, \texttt{INTERNET} \\
+\texttt{description} & texte & 255 caractères au plus, facultatif \\
+\texttt{categorie\_montant} & calculé & \texttt{FAIBLE}, \texttt{MOYEN}, \texttt{ELEVE} \\
+\texttt{source} & calculé & \texttt{KNIME} ou \texttt{API} \\
+\bottomrule
+\caption{Contrat de données (\texttt{docs/CONTRATS.md})}
+\end{longtable}
+
+\section{Organisation du dépôt}
+\begin{lstlisting}
+api/            API Express : src/, tests/, Dockerfile, openapi.yaml
+data/           générateur, règles, données brutes, résultat attendu, sortie KNIME
+db/init/        schéma SQL
+knime/          workflow KNIME exporté (.knwf)
+monitoring/     configurations Prometheus et Grafana
+tests/          test de bout en bout, collection Postman
+scripts/        scripts PowerShell, générateur de trafic, contrôle de cohérence
+docs/           exigences, architecture, contrats, installation, KNIME, démonstration, tests
+rapport/        ce rapport (LaTeX)
+presentation/   support PowerPoint
+\end{lstlisting}
