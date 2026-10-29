@@ -6,13 +6,16 @@
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{lmodern}
+  \newcommand{\sansfont}{\sffamily}
 \else
   \usepackage{fontspec}
+  \newfontfamily\sansfont{DejaVu Sans}
 \fi
 \usepackage[french]{babel}
 \usepackage[a4paper,margin=2.3cm]{geometry}
 \usepackage{graphicx}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
+\usepackage{amssymb}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{longtable}
@@ -38,6 +41,12 @@
 \definecolor{gristexte}{HTML}{555555}
 \definecolor{fondcode}{HTML}{F5F5F5}
 \definecolor{orangeafaire}{HTML}{B45309}
+\definecolor{bluedark}{RGB}{31,56,100}
+
+% --- Tableaux : bordures complètes, en-tête bleu foncé (\rowcolor{bluedark}) ----
+\renewcommand{\arraystretch}{1.25}
+\captionsetup[table]{position=top,skip=4pt}
+\AtBeginDocument{\renewcommand{\tablename}{Tableau}\renewcommand{\listtablename}{Liste des tableaux}}
 
 % --- En-têtes et pieds de page -------------------------------------------------
 \pagestyle{fancy}

@@ -1,0 +1,90 @@
+% Rédaction : BANDE Hamidou ; relecture : BADO Lionel
+\chapter{Tests et résultats}\label{chap:tests}
+
+\section{Stratégie}
+Aucune interface web n'est fournie : conformément à l'énoncé (E6), nous utilisons des outils de
+test d'API plutôt que Cypress. Les tests sont organisés du plus rapide au plus complet :
+
+\begin{table}[H]
+\centering\small
+\caption{Les suites de tests}
+\begin{tabularx}{\linewidth}{|l|r|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Suite}} & \textcolor{white}{\textbf{Tests}} & \textcolor{white}{\textbf{Ce qui est vérifié}} \\
+\hline
+Données (\texttt{node:test}) & 9 & déterminisme ; chaque anomalie injectée donne le motif attendu ; normalisation ; doublons ; comparateur \\
+\hline
+Validation (Jest) & 42 & corps POST et PATCH, paramètres de requête, dates réelles, catégories \\
+\hline
+SQL (Jest) & 5 & paramètres \texttt{\$n}, tentative d'injection, liste blanche du tri, pagination \\
+\hline
+Chargeur (Jest) & 5 & conversion des nombres KNIME, revalidation, doublons, catégorie, BOM \\
+\hline
+API HTTP (Jest, Supertest) & 28 & codes 200, 201, 204, 400, 404, 409, 503 ; filtres ; pagination ; \texttt{/metrics} \\
+\hline
+Intégration PostgreSQL & 9 & schéma réel, chargement, idempotence, contraintes, filtres, CRUD \\
+\hline
+Postman (Newman) & 15 & le scénario de démonstration, erreurs comprises \\
+\hline
+Bout en bout & 7 & toute la chaîne, des données à Grafana \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Le test de bout en bout}
+L'énoncé exige un test de bout en bout de la chaîne principale. \nolinkurl{tests/e2e/chaine-complete.test.js}
+enchaîne sept vérifications ; le numéro de celle qui échoue désigne le maillon en défaut :
+\begin{enumerate}
+  \item l'API et la base répondent ;
+  \item les données chargées sont cohérentes avec le fichier produit (et avec le résultat attendu si elles viennent de KNIME) ;
+  \item les filtres et la pagination renvoient des résultats corrects ;
+  \item un cycle complet création, lecture, modification, suppression, avec les erreurs attendues ;
+  \item \texttt{/metrics} expose requêtes, erreurs et temps de réponse ;
+  \item Prometheus collecte les métriques de l'API ;
+  \item Grafana est provisionné (source Prometheus et tableau de bord).
+\end{enumerate}
+
+\capture{hamidou_08_e2e.png}{Test de bout en bout : 7 vérifications réussies}{fig:e2e}
+
+\section{Résultats obtenus}
+Chaque ligne correspond à une commande réellement exécutée.
+
+\begin{table}[H]
+\centering\small
+\caption{Résultats des tests}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}p{5.2cm}|X|l|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Commande}} & \textcolor{white}{\textbf{Résultat}} & \textcolor{white}{\textbf{Poste, date}} \\
+\hline
+\texttt{npm run test:data} & pass 9, fail 0 & BANDE, 28/10 \\
+\hline
+\texttt{npm run data:reference} & 946 valides, 64 rejetées & BANDE, 28/10 \\
+\hline
+\texttt{cd api \&\& npx jest} & 80 passed (+ 9 ignorés sans base) & BANDE, 29/10 \\
+\hline
+\texttt{curl /health/ready} & \texttt{\{"statut":"ok","base":"ok"\}} & BANDE, 29/10 \\
+\hline
+INSERT invalide & refusé par \texttt{CHECK} & BANDE, 28/10 \\
+\hline
+Chargement \(\times 2\) & 946 puis 0 insérées & BANDE, 28/10 \\
+\hline
+\texttt{npm run test:integration} & 9 passed & BANDE, 29/10 \\
+\hline
+Newman (collection Postman) & 15 requêtes, 15 assertions, 0 échec & BANDE, 29/10 \\
+\hline
+\texttt{npm run test:e2e} & pass 7, fail 0 & BANDE, 29/10 \\
+\hline
+\texttt{npm run data:compare} (sortie KNIME) & CONFORME : 946 valides, 64 rejetées & SOMBIE, 29/10 \\
+\hline
+Panne de PostgreSQL (85 s) & 503 pendant la panne, 200 après, sans relancer l'API & BANDE, 29/10 \\
+\hline
+Scripts PowerShell (6 fichiers) & 0 erreur de syntaxe (PowerShell 7.4) ; exécution sous Windows non réalisée & BANDE, 29/10 \\
+\hline
+\end{tabularx}
+\end{table}
+
+Les tests sous Docker ont été joués avec les données de l'ETL de référence (\texttt{data/expected}).
+La sortie de KNIME lui est identique ligne à ligne (\texttt{npm run data:compare} : CONFORME), ce
+qui garantit le même résultat avec les données produites par KNIME.
+
+\capture{hamidou_09_newman.png}{Collection Postman jouée avec Newman : 15 requêtes, 15 assertions, 0 échec}{fig:postman}

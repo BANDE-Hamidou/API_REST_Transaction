@@ -36,7 +36,7 @@ Les fichiers `prometheus.yml`, `alert_rules.yml`, la source de données et le ta
 | T12 | Collection Postman | `newman run …` | 15 requêtes, 15 assertions, 0 échec | ✅ | ⬜ |
 | T13 | Panne réelle de PostgreSQL | arrêt de PostgreSQL pendant que l'API tourne | `/health` 200, `/health/ready` 503, `/api/transactions` 503 `BASE_INDISPONIBLE` ; retour à 200 **sans redémarrer l'API** ; 503 comptés `error_type="serveur"` | ✅ | 🖐 (`docker compose stop postgres`) |
 | T14 | Cohérence entre composants | `npm run check` | tous les contrôles réussis, sauf `.knwf` signalé « A FAIRE » | ✅ | ⬜ |
-| T15 | Validation du fichier PowerPoint | validateur OOXML + rendu LibreOffice | « All validations PASSED », 12 diapositives inspectées | ✅ | 🖐 ouvrir dans PowerPoint |
+| T15 | Validation du fichier PowerPoint | — | support de l'oral conservé hors du dépôt | — | — |
 | T16 | Règles KNIME documentées (simulation JS de la sémantique Rule Engine) | script de simulation | 956/54 puis 946/10 ; 0 écart de champ ; motifs identiques | ✅ (simulation, **pas** KNIME) | — |
 | T17 | **Workflow KNIME réel** | exécution dans KNIME + `npm run data:compare` | — | ⬜ **KNIME absent** | 🖐 Roseline |
 | T18 | **`docker compose up -d --build`** | `scripts\demarrer.ps1` | — | ⬜ **Docker absent** | 🖐 tous |

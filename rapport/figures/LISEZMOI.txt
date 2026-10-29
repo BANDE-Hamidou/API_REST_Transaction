@@ -5,17 +5,13 @@ Fichier                          Qui       Ce qu'elle montre
 hamidou_01_schema.png            BANDE     \dt : les 3 tables                                    (fait)
 hamidou_02_insert_refuse.png     BANDE     INSERT avec montant -5 refusé par la contrainte CHECK (fait)
 hamidou_03_idempotence.png       BANDE     2e chargement : inserees 0, mises_a_jour 946          (fait)
+hamidou_04_prometheus_cibles.png  BANDE     Prometheus /targets : api-transactions UP              (fait)
+hamidou_05_prometheus_alertes.png BANDE     Prometheus /alerts : 3 règles inactives                (fait)
+hamidou_06_grafana_trafic.png     BANDE     tableau de bord Grafana sous trafic                    (fait)
+hamidou_07_grafana_panne.png      BANDE     Grafana pendant la panne de PostgreSQL (503)           (fait)
+hamidou_08_e2e.png                BANDE     npm run test:e2e -> pass 7                             (fait)
+hamidou_09_newman.png             BANDE     collection Postman (Newman) -> 15/15                   (fait)
 knime_01_workflow.png            SOMBIE    workflow complet, tous les nœuds verts   (fait)
 knime_02_noeud9.png              SOMBIE    règles du nœud 9 (Rule Engine)   (fait)
 knime_03_rejets_par_motif.png    SOMBIE    sortie du nœud 23 : 18 motifs, total 64   (fait)
 knime_04_conforme.png            SOMBIE    npm run data:compare -> CONFORME   (fait)
-davy_01_npm_test.png             KOUMTOUBRE  npm test -> 80 passed
-davy_02_integration.png          KOUMTOUBRE  npm run test:integration -> 9 passed
-davy_03_postman_runner.png       KOUMTOUBRE  Postman Runner 15/15
-davy_04_filtre.png               KOUMTOUBRE  réponse JSON filtrée (type=VIREMENT&statut=EFFECTUEE)
-davy_05_erreur_400.png           KOUMTOUBRE  réponse 400 avec le détail par champ
-lionel_01_targets.png            BADO      Prometheus /targets : api-transactions UP
-lionel_02_alertes.png            BADO      Prometheus /alerts : 3 règles
-lionel_03_grafana_trafic.png     BADO      tableau de bord Grafana sous trafic
-lionel_04_grafana_panne.png      BADO      Grafana pendant la panne de PostgreSQL (503)
-lionel_05_e2e.png                BADO      npm run test:e2e -> pass 7

@@ -24,20 +24,25 @@ lise dans l'ordre.
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}l l X@{}}
-\toprule
-\textbf{Nœuds} & \textbf{Étape} & \textbf{Ce qui est fait} \\
-\midrule
-1 & Lire & CSV Reader ; \textbf{toutes les colonnes forcées en texte} (String) \\
-2--8 & Normaliser & codes en majuscules sans espaces ; montant : espaces retirés, virgule $\rightarrow$ point ; date française \texttt{JJ/MM/AAAA hh:mm:ss} $\rightarrow$ ISO \texttt{AAAA-MM-JJThh:mm:ss} \\
-9--10 & Contrôler & Rule Engine : une colonne \texttt{motif\_rejet} ; séparation des lignes \texttt{OK} et des rejets \\
-11--13 & Dédoublonner & doublons sur \texttt{reference} seule ; la première occurrence est gardée, les suivantes reçoivent \texttt{DOUBLON\_REFERENCE} \\
-14--18 & Enrichir et écrire & montant converti en nombre ; \texttt{categorie\_montant} ; ordre des colonnes ; écriture des valides \\
-19--23 & Écrire les rejets & réunion des deux sorties de rejet ; écriture ; comptage par motif \\
-\bottomrule
-\end{tabularx}
 \caption{Les six étapes du workflow KNIME}
 \label{tab:knime-etapes}
+\begin{tabularx}{\linewidth}{|l|l|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Nœuds}} & \textcolor{white}{\textbf{Étape}} & \textcolor{white}{\textbf{Ce qui est fait}} \\
+\hline
+1 & Lire & CSV Reader ; \textbf{toutes les colonnes forcées en texte} (String) \\
+\hline
+2--8 & Normaliser & codes en majuscules sans espaces ; montant : espaces retirés, virgule $\rightarrow$ point ; date française \texttt{JJ/MM/AAAA hh:mm:ss} $\rightarrow$ ISO \texttt{AAAA-MM-JJThh:mm:ss} \\
+\hline
+9--10 & Contrôler & Rule Engine : une colonne \texttt{motif\_rejet} ; séparation des lignes \texttt{OK} et des rejets \\
+\hline
+11--13 & Dédoublonner & doublons sur \texttt{reference} seule ; la première occurrence est gardée, les suivantes reçoivent \texttt{DOUBLON\_REFERENCE} \\
+\hline
+14--18 & Enrichir et écrire & montant converti en nombre ; \texttt{categorie\_montant} ; ordre des colonnes ; écriture des valides \\
+\hline
+19--23 & Écrire les rejets & réunion des deux sorties de rejet ; écriture ; comptage par motif \\
+\hline
+\end{tabularx}
 \end{table}
 
 \paragraph{Pourquoi tout lire en texte.} Si le CSV Reader devine les types, il lit \texttt{montant}
@@ -74,41 +79,52 @@ Les points de contrôle intermédiaires ont tous été atteints :
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}llr@{}}
-\toprule
-\textbf{Nœud} & \textbf{Contrôle} & \textbf{Lignes} \\
-\midrule
-1 CSV Reader & lignes lues, 10 colonnes en texte & 1010 \\
-10 Séparation & sortie \texttt{OK} / rejets du nœud 9 & 956 / 54 \\
-13 Séparation & valides / doublons & 946 / 10 \\
-23 GroupBy & motifs différents (total 64) & 18 \\
-\bottomrule
-\end{tabular}
 \caption{Points de contrôle du workflow (poste de SOMBIE, 29/10/2026)}
 \label{tab:knime-controles}
+\begin{tabular}{|l|l|r|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Nœud}} & \textcolor{white}{\textbf{Contrôle}} & \textcolor{white}{\textbf{Lignes}} \\
+\hline
+1 CSV Reader & lignes lues, 10 colonnes en texte & 1010 \\
+\hline
+10 Séparation & sortie \texttt{OK} / rejets du nœud 9 & 956 / 54 \\
+\hline
+13 Séparation & valides / doublons & 946 / 10 \\
+\hline
+23 GroupBy & motifs différents (total 64) & 18 \\
+\hline
+\end{tabular}
 \end{table}
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}lr@{\hspace{2.5em}}lr@{}}
-\toprule
-\textbf{Motif} & \textbf{Lignes} & \textbf{Motif} & \textbf{Lignes} \\
-\midrule
-DOUBLON\_REFERENCE & 10 & DATE\_INVALIDE & 4 \\
-MONTANT\_NEGATIF & 5 & REFERENCE\_MANQUANTE & 4 \\
-COMPTE\_SOURCE\_MANQUANT & 4 & TYPE\_INVALIDE & 4 \\
-COMPTE\_SOURCE\_INVALIDE & 3 & DATE\_MANQUANTE & 3 \\
-DESTINATION\_MANQUANTE & 3 & DEVISE\_INVALIDE & 3 \\
-MONTANT\_MANQUANT & 3 & MONTANT\_NON\_NUMERIQUE & 3 \\
-MONTANT\_NUL & 3 & REFERENCE\_INVALIDE & 3 \\
-STATUT\_INVALIDE & 3 & CANAL\_INVALIDE & 2 \\
-COMPTES\_IDENTIQUES & 2 & DESTINATION\_INVALIDE & 2 \\
-\midrule
-\multicolumn{3}{@{}l}{\textbf{Total des rejets} (54 anomalies + 10 doublons)} & \textbf{64} \\
-\bottomrule
-\end{tabular}
 \caption{Rejets par motif produits par KNIME}
 \label{tab:knime-motifs}
+\begin{tabular}{|l|r|l|r|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Motif}} & \textcolor{white}{\textbf{Lignes}} & \textcolor{white}{\textbf{Motif}} & \textcolor{white}{\textbf{Lignes}} \\
+\hline
+DOUBLON\_REFERENCE & 10 & DATE\_INVALIDE & 4 \\
+\hline
+MONTANT\_NEGATIF & 5 & REFERENCE\_MANQUANTE & 4 \\
+\hline
+COMPTE\_SOURCE\_MANQUANT & 4 & TYPE\_INVALIDE & 4 \\
+\hline
+COMPTE\_SOURCE\_INVALIDE & 3 & DATE\_MANQUANTE & 3 \\
+\hline
+DESTINATION\_MANQUANTE & 3 & DEVISE\_INVALIDE & 3 \\
+\hline
+MONTANT\_MANQUANT & 3 & MONTANT\_NON\_NUMERIQUE & 3 \\
+\hline
+MONTANT\_NUL & 3 & REFERENCE\_INVALIDE & 3 \\
+\hline
+STATUT\_INVALIDE & 3 & CANAL\_INVALIDE & 2 \\
+\hline
+COMPTES\_IDENTIQUES & 2 & DESTINATION\_INVALIDE & 2 \\
+\hline
+\multicolumn{3}{|l|}{\textbf{Total des rejets} (54 anomalies + 10 doublons)} & \textbf{64} \\
+\hline
+\end{tabular}
 \end{table}
 
 \capture{knime_03_rejets_par_motif.png}{Sortie du nœud 23 : 18 motifs de rejet, 64 lignes au total}{fig:knime-motifs}
@@ -134,17 +150,19 @@ projet est de corriger le workflow, jamais les règles, pour « faire passer » 
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}l X X@{}}
-\toprule
-\textbf{Nœud} & \textbf{Symptôme} & \textbf{Cause et correction} \\
-\midrule
-2 & 17 colonnes au lieu de 10 & le mode par défaut ajoute des colonnes suffixées \texttt{\_transformed} ; choisir \emph{Replace selected input columns} \\
-12 & règle en rouge & dans KNIME 5.12, la colonne de statut s'appelle \texttt{Duplicate Status} et non \texttt{duplicate-type-classifier} comme prévu ; insérer la colonne depuis la liste plutôt que la taper \\
-18 & le nœud refuse de s'exécuter & un port optionnel \emph{File System Connection} avait été ajouté par erreur et restait non relié ; le retirer \\
-\bottomrule
-\end{tabularx}
 \caption{Difficultés rencontrées lors de la construction du workflow}
 \label{tab:knime-difficultes}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Nœud}} & \textcolor{white}{\textbf{Symptôme}} & \textcolor{white}{\textbf{Cause et correction}} \\
+\hline
+2 & 17 colonnes au lieu de 10 & le mode par défaut ajoute des colonnes suffixées \texttt{\_transformed} ; choisir \emph{Replace selected input columns} \\
+\hline
+12 & règle en rouge & dans KNIME 5.12, la colonne de statut s'appelle \texttt{Duplicate Status} et non \texttt{duplicate-type-classifier} comme prévu ; insérer la colonne depuis la liste plutôt que la taper \\
+\hline
+18 & le nœud refuse de s'exécuter & un port optionnel \emph{File System Connection} avait été ajouté par erreur et restait non relié ; le retirer \\
+\hline
+\end{tabularx}
 \end{table}
 
 La spécification \texttt{docs/KNIME\_WORKFLOW.md} reste la référence pour reconstruire le workflow

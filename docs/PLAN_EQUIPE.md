@@ -18,7 +18,7 @@ Chaque membre doit pouvoir expliquer **son** composant **et** faire tourner **to
 | **KOUMTOUBRE Davy** | API REST Express.js | `api/src/**` (sauf `metrics/` et `scripts/`), `api/openapi.yaml`, `api/tests/unit/*`, `api/tests/api/*`, `api/tests/integration/*`, `tests/postman/*` |
 | **BADO Lionel** | Supervision et test de bout en bout | `api/src/metrics/metrics.js`, `monitoring/**`, `tests/e2e/*`, `scripts/generer-trafic.js`, `docs/RAPPORT_TESTS.md`, `docs/SCENARIO_DEMO.md` |
 
-Documents communs : `docs/EXIGENCES.md`, `docs/ARCHITECTURE.md`, `docs/CONTRATS.md`, `presentation/`.
+Documents communs : `docs/EXIGENCES.md`, `docs/ARCHITECTURE.md`, `docs/CONTRATS.md`, `rapport/` (le support PowerPoint de l'oral est conservé hors du dépôt).
 
 ## 2. Fiches individuelles
 

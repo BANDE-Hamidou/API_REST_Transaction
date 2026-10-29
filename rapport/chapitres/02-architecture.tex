@@ -40,42 +40,57 @@ monté en lecture seule dans le conteneur de l'API : KNIME y écrit, le chargeur
 \section{Composants et justification}
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}lXX@{}}
-\toprule
-\textbf{Composant} & \textbf{Rôle} & \textbf{Pourquoi ce choix} \\
-\midrule
-Générateur (Node.js) & transactions fictives et anomalies contrôlées & déterministe (graine 2026) : toute l'équipe a les mêmes données \\
-KNIME (exigé) & normaliser, contrôler, dédoublonner, enrichir & workflow visuel, explicable nœud par nœud \\
-Oracle ETL (Node.js) & résultat attendu des règles KNIME & permet de \emph{prouver} que la sortie KNIME est juste \\
-PostgreSQL 16 & stockage & contraintes \texttt{CHECK}, transactions, \texttt{ON CONFLICT}, index \\
-Express.js 5 (exigé) & API REST & transmet les erreurs des fonctions asynchrones au gestionnaire d'erreurs \\
-prom-client 15 & exposition de \texttt{/metrics} & bibliothèque de référence pour Node.js \\
-Prometheus (exigé) & collecte et alertes & modèle \emph{pull} : l'API ne dépend pas de Prometheus \\
-Grafana (exigé) & tableau de bord & provisionné par fichiers : aucun clic, installation reproductible \\
-Jest, Supertest, Newman & tests & pas d'interface web, donc des outils de test d'API (exigence E6) \\
-\bottomrule
-\end{tabularx}
 \caption{Composants, rôles et justification}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Composant}} & \textcolor{white}{\textbf{Rôle}} & \textcolor{white}{\textbf{Pourquoi ce choix}} \\
+\hline
+Générateur (Node.js) & transactions fictives et anomalies contrôlées & déterministe (graine 2026) : toute l'équipe a les mêmes données \\
+\hline
+KNIME (exigé) & normaliser, contrôler, dédoublonner, enrichir & workflow visuel, explicable nœud par nœud \\
+\hline
+Oracle ETL (Node.js) & résultat attendu des règles KNIME & permet de \emph{prouver} que la sortie KNIME est juste \\
+\hline
+PostgreSQL 16 & stockage & contraintes \texttt{CHECK}, transactions, \texttt{ON CONFLICT}, index \\
+\hline
+Express.js 5 (exigé) & API REST & transmet les erreurs des fonctions asynchrones au gestionnaire d'erreurs \\
+\hline
+prom-client 15 & exposition de \texttt{/metrics} & bibliothèque de référence pour Node.js \\
+\hline
+Prometheus (exigé) & collecte et alertes & modèle \emph{pull} : l'API ne dépend pas de Prometheus \\
+\hline
+Grafana (exigé) & tableau de bord & provisionné par fichiers : aucun clic, installation reproductible \\
+\hline
+Jest, Supertest, Newman & tests & pas d'interface web, donc des outils de test d'API (exigence E6) \\
+\hline
+\end{tabularx}
 \end{table}
 
 \section{Organisation du code de l'API}
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}lX@{}}
-\toprule
-\textbf{Dossier ou fichier} & \textbf{Contenu} \\
-\midrule
-\texttt{server.js}, \texttt{app.js}, \texttt{config.js} & démarrage, arrêt propre, assemblage d'Express, variables d'environnement \\
-\texttt{domain/rules.js} & règles métier : valeurs autorisées, formats, catégories de montant \\
-\texttt{validation/} & validation des corps (POST, PATCH) et des paramètres de requête \\
-\texttt{repositories/} & accès à PostgreSQL ; \texttt{queryBuilder} produit le SQL paramétré \\
-\texttt{routes/} & transactions, rejets, chargements \\
-\texttt{metrics/metrics.js} & compteurs, histogramme et middleware de mesure \\
-\texttt{middleware/errorHandler.js} & format d'erreur unique (400, 404, 409, 503, 500) \\
-\texttt{scripts/load-csv.js} & chargement des sorties KNIME \\
-\bottomrule
-\end{tabularx}
 \caption{Organisation de \texttt{api/src}}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Dossier ou fichier}} & \textcolor{white}{\textbf{Contenu}} \\
+\hline
+\texttt{server.js}, \texttt{app.js}, \texttt{config.js} & démarrage, arrêt propre, assemblage d'Express, variables d'environnement \\
+\hline
+\texttt{domain/rules.js} & règles métier : valeurs autorisées, formats, catégories de montant \\
+\hline
+\texttt{validation/} & validation des corps (POST, PATCH) et des paramètres de requête \\
+\hline
+\texttt{repositories/} & accès à PostgreSQL ; \texttt{queryBuilder} produit le SQL paramétré \\
+\hline
+\texttt{routes/} & transactions, rejets, chargements \\
+\hline
+\texttt{metrics/metrics.js} & compteurs, histogramme et middleware de mesure \\
+\hline
+\texttt{middleware/errorHandler.js} & format d'erreur unique (400, 404, 409, 503, 500) \\
+\hline
+\texttt{scripts/load-csv.js} & chargement des sorties KNIME \\
+\hline
+\end{tabularx}
 \end{table}
 
 Les routes ne parlent qu'à une \emph{interface} de dépôt de données. En production, c'est
@@ -85,15 +100,18 @@ base, puis le SQL séparément.
 \section{Ports}
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Service} & \textbf{Sur le poste} & \textbf{Dans le réseau Docker} \\
-\midrule
-API & \texttt{http://localhost:3000} & \texttt{api:3000} \\
-PostgreSQL & \texttt{localhost:5432} & \texttt{postgres:5432} \\
-Prometheus & \texttt{http://localhost:9090} & \texttt{prometheus:9090} \\
-Grafana & \texttt{http://localhost:3001} & \texttt{grafana:3000} \\
-\bottomrule
-\end{tabular}
 \caption{Ports des services (modifiables dans \texttt{.env})}
+\begin{tabular}{|l|l|l|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Service}} & \textcolor{white}{\textbf{Sur le poste}} & \textcolor{white}{\textbf{Dans le réseau Docker}} \\
+\hline
+API & \texttt{http://localhost:3000} & \texttt{api:3000} \\
+\hline
+PostgreSQL & \texttt{localhost:5432} & \texttt{postgres:5432} \\
+\hline
+Prometheus & \texttt{http://localhost:9090} & \texttt{prometheus:9090} \\
+\hline
+Grafana & \texttt{http://localhost:3001} & \texttt{grafana:3000} \\
+\hline
+\end{tabular}
 \end{table}

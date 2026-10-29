@@ -19,3 +19,6 @@ desktop.ini
 .vscode/
 .idea/
 ~$*.pptx
+
+# Support de présentation : présenté à l'oral, non versionné
+presentation/

@@ -39,8 +39,6 @@ console.log('\n1. Fichiers livrables');
 const knwf = fs.existsSync(path.join(R, 'knime')) && fs.readdirSync(path.join(R, 'knime')).some((f) => f.endsWith('.knwf'));
 if (knwf) ok('knime/*.knwf (workflow KNIME exporté)');
 else console.log('  A FAIRE knime/transactions_etl.knwf absent : à exporter depuis KNIME (docs/KNIME_WORKFLOW.md, étape 9)');
-const pptx = fs.existsSync(path.join(R, 'presentation')) && fs.readdirSync(path.join(R, 'presentation')).some((f) => f.endsWith('.pptx'));
-verifier(pptx, 'presentation/*.pptx');
 
 console.log('\n2. Valeurs autorisées identiques (KNIME / API / SQL / OpenAPI)');
 const regleData = require(path.join(R, 'data/scripts/rules.js'));

@@ -114,7 +114,6 @@ scripts/             scripts PowerShell (démarrer, charger, tester…) et gén�
 docs/                exigences, architecture, installation, KNIME, plan d'équipe, démonstration, tests
 docs/captures/       captures d'écran (preuves)
 rapport/             rapport du projet (LaTeX : `tectonic main.tex` ou Overleaf)
-presentation/        support PowerPoint
 ```
 
 ## Documentation
