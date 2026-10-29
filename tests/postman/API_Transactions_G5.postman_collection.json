@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "API Transactions - Groupe 5 (démo)",
+    "description": "Scénario de démonstration et de test. Importer dans Postman avec l'environnement local, ou exécuter : npx newman run tests/postman/API_Transactions_G5.postman_collection.json -e tests/postman/local.postman_environment.json",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": { "type": "text/javascript", "exec": [
+        "if (!pm.collectionVariables.get('ref_demo')) {",
+        "  pm.collectionVariables.set('ref_demo', 'TXN-7' + String(Date.now()).slice(-5));",
+        "}"
+      ] }
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Santé",
+      "item": [
+        {
+          "name": "GET /health/ready",
+          "request": { "method": "GET", "url": "{{baseUrl}}/health/ready" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('200 et base OK', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().base).to.eql('ok'); });"
+          ] } }]
+        },
+        {
+          "name": "GET /api/chargements/dernier",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/chargements/dernier" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('un chargement KNIME existe', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().lignes_valides_lues).to.be.above(0); });"
+          ] } }]
+        }
+      ]
+    },
+    {
+      "name": "2. Consultation et filtres",
+      "item": [
+        {
+          "name": "Liste paginée",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions?page=1&limite=5" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "const j = pm.response.json();",
+            "pm.test('5 éléments et pagination', () => { pm.expect(j.donnees.length).to.eql(5); pm.expect(j.pagination.total).to.be.above(5); });"
+          ] } }]
+        },
+        {
+          "name": "Filtre type + statut",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions?type=VIREMENT&statut=EFFECTUEE&limite=50" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('uniquement des virements effectués', () => { pm.response.json().donnees.forEach(t => { pm.expect(t.type).to.eql('VIREMENT'); pm.expect(t.statut).to.eql('EFFECTUEE'); }); });"
+          ] } }]
+        },
+        {
+          "name": "Filtre période + montant, tri",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions?date_debut=2026-03-01&date_fin=2026-03-31&montant_min=100000&tri=montant&ordre=desc" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "const d = pm.response.json().donnees;",
+            "pm.test('mars 2026, >= 100 000, tri décroissant', () => { d.forEach(t => { pm.expect(t.date_transaction.startsWith('2026-03')).to.be.true; pm.expect(t.montant).to.be.at.least(100000); }); for (let i = 1; i < d.length; i++) pm.expect(d[i-1].montant).to.be.at.least(d[i].montant); });"
+          ] } }]
+        },
+        {
+          "name": "Statistiques par type",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions/statistiques?devise=XOF" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('agrégats présents', () => pm.expect(pm.response.json().donnees.length).to.be.above(0));"
+          ] } }]
+        },
+        {
+          "name": "Rejets KNIME par motif",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/rejets/statistiques" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('plusieurs motifs de rejet', () => pm.expect(pm.response.json().par_motif.length).to.be.at.least(5));"
+          ] } }]
+        }
+      ]
+    },
+    {
+      "name": "3. Cycle d'écriture",
+      "item": [
+        {
+          "name": "POST créer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/transactions",
+            "body": { "mode": "raw", "raw": "{\n  \"reference\": \"{{ref_demo}}\",\n  \"compte_source\": \"CPT10000001\",\n  \"compte_destination\": \"CPT10000002\",\n  \"type\": \"VIREMENT\",\n  \"montant\": 125000,\n  \"devise\": \"XOF\",\n  \"date_transaction\": \"2026-10-28T10:00:00\",\n  \"canal\": \"MOBILE\",\n  \"description\": \"Demo Postman\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('201 + catégorie calculée', () => { pm.response.to.have.status(201); pm.expect(pm.response.json().categorie_montant).to.eql('MOYEN'); pm.expect(pm.response.headers.get('Location')).to.include(pm.collectionVariables.get('ref_demo')); });"
+          ] } }]
+        },
+        {
+          "name": "POST doublon -> 409",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/transactions",
+            "body": { "mode": "raw", "raw": "{\n  \"reference\": \"{{ref_demo}}\",\n  \"compte_source\": \"CPT10000001\",\n  \"type\": \"DEPOT\",\n  \"montant\": 1000,\n  \"date_transaction\": \"2026-10-28T10:00:00\",\n  \"canal\": \"GUICHET\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('409 CONFLIT', () => { pm.response.to.have.status(409); pm.expect(pm.response.json().erreur.code).to.eql('CONFLIT'); });"
+          ] } }]
+        },
+        {
+          "name": "PATCH statut",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/transactions/{{ref_demo}}",
+            "body": { "mode": "raw", "raw": "{ \"statut\": \"EFFECTUEE\", \"montant\": 1500000 }" }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('200, catégorie recalculée ELEVE', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().categorie_montant).to.eql('ELEVE'); });"
+          ] } }]
+        },
+        {
+          "name": "DELETE",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/transactions/{{ref_demo}}" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('204', () => pm.response.to.have.status(204));",
+            "pm.collectionVariables.unset('ref_demo');"
+          ] } }]
+        }
+      ]
+    },
+    {
+      "name": "4. Erreurs attendues",
+      "item": [
+        {
+          "name": "POST invalide -> 400 (détail par champ)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/transactions",
+            "body": { "mode": "raw", "raw": "{\n  \"reference\": \"TXN-1\",\n  \"compte_source\": \"CPT10000001\",\n  \"type\": \"TRANSFERT\",\n  \"montant\": -500,\n  \"date_transaction\": \"2026-02-30T10:00:00\",\n  \"canal\": \"GAB\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('400 avec 4 champs en erreur', () => { pm.response.to.have.status(400); const c = pm.response.json().erreur.details.map(d => d.champ).sort(); pm.expect(c).to.eql(['date_transaction','montant','reference','type']); });"
+          ] } }]
+        },
+        {
+          "name": "Filtre inconnu -> 400",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions?tpye=DEPOT" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('400', () => pm.response.to.have.status(400));"
+          ] } }]
+        },
+        {
+          "name": "Transaction inexistante -> 404",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/transactions/TXN-000000" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "pm.test('404', () => pm.response.to.have.status(404));"
+          ] } }]
+        }
+      ]
+    },
+    {
+      "name": "5. Métriques",
+      "item": [
+        {
+          "name": "GET /metrics",
+          "request": { "method": "GET", "url": "{{baseUrl}}/metrics" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+            "const t = pm.response.text();",
+            "pm.test('requêtes, erreurs, latence exposées', () => { ['http_requests_total{','http_request_errors_total{','http_request_duration_seconds_bucket{'].forEach(m => pm.expect(t).to.include(m)); });"
+          ] } }]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "ref_demo", "value": "" }
+  ]
+}
