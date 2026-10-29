@@ -1,0 +1,91 @@
+% Rédaction : BANDE Hamidou ; relecture : BADO Lionel
+\chapter{Supervision avec Prometheus et Grafana}\label{chap:supervision}
+
+\section{Les métriques exposées}
+Un middleware Express mesure chaque requête et la bibliothèque \texttt{prom-client} publie les
+résultats sur \texttt{/metrics}, au format texte de Prometheus.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}llX@{}}
+\toprule
+\textbf{Métrique} & \textbf{Type} & \textbf{Ce qu'elle mesure} \\
+\midrule
+\texttt{http\_requests\_total} & Counter & requêtes, par méthode, route et code HTTP \\
+\texttt{http\_request\_errors\_total} & Counter & erreurs, classées \texttt{client} (4xx) ou \texttt{serveur} (5xx) \\
+\texttt{http\_request\_duration\_seconds} & Histogram & temps de réponse, seaux de 5~ms à 5~s \\
+\texttt{http\_requests\_in\_flight} & Gauge & requêtes en cours \\
+\texttt{transactions\_operations\_total} & Counter & créations, modifications, suppressions (métrique métier) \\
+\bottomrule
+\end{tabularx}
+\caption{Métriques de l'API : requêtes, erreurs et temps de réponse (exigence E4)}
+\end{table}
+
+Un \emph{Counter} ne fait que monter, une \emph{Gauge} monte et descend, un \emph{Histogram} range
+les durées par seaux pour calculer des centiles. Le label \texttt{route} contient le \emph{modèle}
+de route (\texttt{/api/transactions/:reference}) et jamais l'URL réelle : sinon chaque référence
+créerait sa propre série et leur nombre exploserait.
+
+\section{Prometheus}
+Prometheus vient lire \texttt{api:3000/metrics} toutes les 5 secondes (modèle \emph{pull}) sous le
+nom de tâche \texttt{api-transactions} : l'API n'a pas besoin de connaître Prometheus.
+
+\capture{hamidou_04_prometheus_cibles.png}{Prometheus : la cible \texttt{api-transactions} est UP}{fig:prom-targets}
+
+Trois règles d'alerte sont chargées ; en fonctionnement normal, elles sont toutes inactives.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+\textbf{Alerte} & \textbf{Condition} & \textbf{Durée} \\
+\midrule
+\texttt{ApiIndisponible} & la cible ne répond plus (\texttt{up == 0}) & 30 s \\
+\texttt{TauxErreursServeurEleve} & plus de 5 \% d'erreurs serveur & 1 min \\
+\texttt{LatenceP95Elevee} & p95 au-dessus de 500 ms & 2 min \\
+\bottomrule
+\end{tabularx}
+\caption{Règles d'alerte (\texttt{monitoring/prometheus/alert\_rules.yml})}
+\end{table}
+
+\capture{hamidou_05_prometheus_alertes.png}{Prometheus : les trois règles d'alerte, inactives}{fig:prom-alertes}
+
+Requêtes PromQL principales :
+\begin{lstlisting}
+sum(rate(http_requests_total{job="api-transactions"}[1m]))                     # débit
+sum(rate(http_request_errors_total[5m])) / sum(rate(http_requests_total[5m]))   # taux d'erreurs
+histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))  # p95
+\end{lstlisting}
+
+\section{Grafana}
+Grafana se configure seul au démarrage, à partir des fichiers de \texttt{monitoring/grafana/} :
+source de données Prometheus et tableau de bord « API Transactions - Groupe 5 ». Ses 13 panneaux :
+API disponible, requêtes par seconde (globales et par route), taux d'erreurs, erreurs par code HTTP,
+latence p95, centiles p50/p95/p99, temps de réponse moyen par route, répartition des codes HTTP,
+écritures, requêtes en cours, mémoire du processus et latence de la boucle d'événements Node.js.
+
+La figure~\ref{fig:grafana-trafic} a été prise pendant le trafic de démonstration
+(\texttt{npm run demo:traffic -- --rps 6}), qui mêle lectures, créations, modifications,
+suppressions et erreurs volontaires (400, 404, 409). L'API traite environ 6 requêtes par seconde
+avec une latence p95 d'environ 46~ms. Le taux d'erreurs affiché (environ 15~\%) correspond à ces
+erreurs \emph{client} volontaires : aucune erreur serveur n'apparaît.
+
+\capture{hamidou_06_grafana_trafic.png}{Le tableau de bord pendant le trafic de démonstration}{fig:grafana-trafic}
+
+\section{Panne contrôlée de la base}
+Pendant le trafic, nous avons arrêté PostgreSQL (\texttt{docker compose stop postgres}) pendant
+85 secondes, de 17:56:49 à 17:58:14 le 29/10/2026, puis l'avons redémarré
+(\texttt{docker compose start postgres}). Observations :
+\begin{itemize}
+  \item l'API reste vivante : \texttt{/health} répond 200, et \texttt{/health/ready} signale
+        la panne (statut \texttt{degrade}, base \texttt{indisponible}) ;
+  \item les routes de données répondent 503 \texttt{BASE\_INDISPONIBLE} ; sur la fenêtre de
+        6 minutes de la figure~\ref{fig:grafana-panne}, Grafana compte 408 réponses 503 et le taux
+        d'erreurs monte à 50~\% ;
+  \item les temps de réponse p95 et p99 montent à près de 5 s : c'est le délai d'attente de
+        connexion à la base, après lequel l'API répond 503 au lieu de rester bloquée ;
+  \item au redémarrage de la base, l'API se reconnecte seule et répond de nouveau 200, sans avoir
+        été relancée.
+\end{itemize}
+
+\capture{hamidou_07_grafana_panne.png}{Grafana pendant la panne de PostgreSQL : réponses 503 et délais de connexion}{fig:grafana-panne}
