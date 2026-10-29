@@ -15,7 +15,7 @@ Sources officielles : `PROJET_DEV_COMPOSANT_2026_IBAM.pdf` (consignes générale
 | G4 | Configurations, workflows et contrats d'API | `docker-compose.yml`, `monitoring/`, `knime/` (workflow), `api/openapi.yaml`, `docs/CONTRATS.md` | ⚠ `knime/transactions_etl.knwf` à exporter depuis KNIME |
 | G5 | README.md : architecture, prérequis, procédure d'installation | `README.md` + `docs/ARCHITECTURE.md`, `docs/INSTALLATION_WINDOWS.md` | ✅ |
 | G6 | Tests et résultats attendus | `api/tests`, `data/tests`, `tests/e2e`, `tests/postman`, `data/expected/`, `docs/RAPPORT_TESTS.md` | ✅ |
-| G7 | Présentation PowerPoint | `presentation/` | ✅ (à personnaliser) |
+| G7 | Présentation PowerPoint | support présenté à l'oral, conservé hors du dépôt | hors dépôt (choix de l'équipe) |
 | G8 | Installation reproductible sur machine neuve ; Docker Compose avec configs, volumes, données de test | `docker-compose.yml` (4 services, 3 volumes), `data/raw` versionné | ✅ ⚠ jamais exécuté sous Docker pendant la préparation (Docker absent) |
 | G9 | Procédure distincte pour les outils à installation particulière | `docs/KNIME_WORKFLOW.md`, `docs/INSTALLATION_WINDOWS.md` § KNIME | ✅ |
 | G10 | Au moins un scénario fonctionnel réussi + un test de bout en bout de la chaîne principale | `tests/e2e/chaine-complete.test.js`, `docs/SCENARIO_DEMO.md` | ✅ |

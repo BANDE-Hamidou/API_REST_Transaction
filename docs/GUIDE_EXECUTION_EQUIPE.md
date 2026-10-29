@@ -143,14 +143,14 @@ Le test 2 compare automatiquement `data/processed` au résultat attendu quand le
 | Qui | Action |
 |---|---|
 | Roseline | `knime/transactions_etl.knwf` exporté et poussé |
-| Chacun | ses 2 à 3 diapositives dans `presentation/` (captures réelles) |
+| Chacun | son chapitre du rapport (`rapport/`) et ses diapositives de l'oral (hors dépôt) |
 | Lionel | `RAPPORT_TESTS.md` : colonne « Poste de l'équipe » remplie |
 | Hamidou | veiller à l'ordre des fusions, `npm run check`, tag : `git tag v1.0; git push origin v1.0` |
 
 ## Étape 10 : répétition et envoi (tous)
 1. Répéter `SCENARIO_DEMO.md` **chronométré** (objectif 8 min) sur le PC de présentation, **pile déjà démarrée**.
 2. Test « machine neuve » (fortement conseillé) : un membre qui n'a jamais lancé le projet clone le dépôt et suit uniquement le `README.md`. Noter tout blocage et corriger la doc.
-3. Envoyer le mail : à **kyfadeloumar@gmail.com**, objet **`[PROJET_DEV_COMPOSANT_2026]`**, contenu : groupe 5 SIE, thème 6, membres, lien du dépôt public, (le PowerPoint est dans le dépôt, dossier `presentation/`).
+3. Envoyer le mail : à **kyfadeloumar@gmail.com**, objet **`[PROJET_DEV_COMPOSANT_2026]`**, contenu : groupe 5 SIE, thème 6, membres, lien du dépôt public ; le rapport est dans le dossier `rapport/`.
 
 ### 🛑 Point d'arrêt n° 3 : prêt à présenter
 - [ ] dépôt **public** accessible en navigation privée (non connecté)
