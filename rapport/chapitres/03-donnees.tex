@@ -22,20 +22,24 @@ donc deux sortes d'anomalies, chacune listée avec le motif attendu :
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}lr@{}}
-\toprule
-\textbf{Catégorie} & \textbf{Lignes} \\
-\midrule
-Lignes brutes & 1010 \\
-\quad dont doublons de référence & 10 \\
-\quad dont anomalies bloquantes & 54 \\
-\quad dont anomalies corrigeables (acceptées après correction) & 26 \\
-\midrule
-Lignes valides attendues & 946 \\
-Lignes rejetées attendues (54 + 10) & 64 \\
-\bottomrule
-\end{tabular}
 \caption{Composition du jeu de données}
+\begin{tabular}{|l|r|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Catégorie}} & \textcolor{white}{\textbf{Lignes}} \\
+\hline
+Lignes brutes & 1010 \\
+\hline
+\quad dont doublons de référence & 10 \\
+\hline
+\quad dont anomalies bloquantes & 54 \\
+\hline
+\quad dont anomalies corrigeables (acceptées après correction) & 26 \\
+\hline
+Lignes valides attendues & 946 \\
+\hline
+Lignes rejetées attendues (54 + 10) & 64 \\
+\hline
+\end{tabular}
 \end{table}
 
 Un ETL de référence écrit en JavaScript (\texttt{data/scripts/reference-etl.js}) applique les
@@ -83,13 +87,14 @@ lignes existantes au lieu de créer des doublons. Une transaction créée par l'
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}lrrr@{}}
-\toprule
-\textbf{Chargement} & \textbf{Insérées} & \textbf{Mises à jour} & \textbf{Rejetées} \\
-\midrule
-1\textsuperscript{er} passage & 946 & 0 & 64 \\
-2\textsuperscript{e} passage & 0 & 946 & 64 \\
-\bottomrule
-\end{tabular}
 \caption{Idempotence du chargement (poste de BANDE, 28/10/2026)}
+\begin{tabular}{|l|r|r|r|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Chargement}} & \textcolor{white}{\textbf{Insérées}} & \textcolor{white}{\textbf{Mises à jour}} & \textcolor{white}{\textbf{Rejetées}} \\
+\hline
+1\textsuperscript{er} passage & 946 & 0 & 64 \\
+\hline
+2\textsuperscript{e} passage & 0 & 946 & 64 \\
+\hline
+\end{tabular}
 \end{table}

@@ -3,24 +3,35 @@
 
 \section{Contrat de données d'une transaction}
 \small
-\begin{longtable}{@{}p{3.9cm}p{3.6cm}p{7.2cm}@{}}
-\toprule
-\textbf{Champ} & \textbf{Format} & \textbf{Règle} \\
-\midrule
+\begin{longtable}{|p{3.9cm}|p{3.6cm}|p{7.2cm}|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Champ}} & \textcolor{white}{\textbf{Format}} & \textcolor{white}{\textbf{Règle}} \\
+\hline
 \endhead
 \texttt{reference} & \texttt{TXN-} + 6 chiffres & obligatoire, unique \\
+\hline
 \texttt{compte\_source} & \texttt{CPT} + 8 chiffres & obligatoire \\
+\hline
 \texttt{compte\_destination} & \texttt{CPT} + 8 chiffres & obligatoire pour un virement ; différent du compte source \\
+\hline
 \texttt{type} & énumération & \texttt{DEPOT}, \texttt{RETRAIT}, \texttt{VIREMENT}, \texttt{PAIEMENT} \\
+\hline
 \texttt{montant} & nombre, 2 décimales & strictement positif \\
+\hline
 \texttt{devise} & énumération & \texttt{XOF} (défaut), \texttt{EUR}, \texttt{USD} \\
+\hline
 \texttt{date\_transaction} & \texttt{AAAA-MM-JJThh:mm:ss} & date réelle \\
+\hline
 \texttt{statut} & énumération & \texttt{EFFECTUEE}, \texttt{EN\_ATTENTE}, \texttt{ANNULEE} \\
+\hline
 \texttt{canal} & énumération & \texttt{GUICHET}, \texttt{GAB}, \texttt{MOBILE}, \texttt{INTERNET} \\
+\hline
 \texttt{description} & texte & 255 caractères au plus, facultatif \\
+\hline
 \texttt{categorie\_montant} & calculé & \texttt{FAIBLE}, \texttt{MOYEN}, \texttt{ELEVE} \\
+\hline
 \texttt{source} & calculé & \texttt{KNIME} ou \texttt{API} \\
-\bottomrule
+\hline
 \caption{Contrat de données (\texttt{docs/CONTRATS.md})}
 \end{longtable}
 

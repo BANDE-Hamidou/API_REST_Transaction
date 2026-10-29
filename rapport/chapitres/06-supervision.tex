@@ -7,18 +7,22 @@ résultats sur \texttt{/metrics}, au format texte de Prometheus.
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}llX@{}}
-\toprule
-\textbf{Métrique} & \textbf{Type} & \textbf{Ce qu'elle mesure} \\
-\midrule
-\texttt{http\_requests\_total} & Counter & requêtes, par méthode, route et code HTTP \\
-\texttt{http\_request\_errors\_total} & Counter & erreurs, classées \texttt{client} (4xx) ou \texttt{serveur} (5xx) \\
-\texttt{http\_request\_duration\_seconds} & Histogram & temps de réponse, seaux de 5~ms à 5~s \\
-\texttt{http\_requests\_in\_flight} & Gauge & requêtes en cours \\
-\texttt{transactions\_operations\_total} & Counter & créations, modifications, suppressions (métrique métier) \\
-\bottomrule
-\end{tabularx}
 \caption{Métriques de l'API : requêtes, erreurs et temps de réponse (exigence E4)}
+\begin{tabularx}{\linewidth}{|l|l|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Métrique}} & \textcolor{white}{\textbf{Type}} & \textcolor{white}{\textbf{Ce qu'elle mesure}} \\
+\hline
+\texttt{http\_requests\_total} & Counter & requêtes, par méthode, route et code HTTP \\
+\hline
+\texttt{http\_request\_errors\_total} & Counter & erreurs, classées \texttt{client} (4xx) ou \texttt{serveur} (5xx) \\
+\hline
+\texttt{http\_request\_duration\_seconds} & Histogram & temps de réponse, seaux de 5~ms à 5~s \\
+\hline
+\texttt{http\_requests\_in\_flight} & Gauge & requêtes en cours \\
+\hline
+\texttt{transactions\_operations\_total} & Counter & créations, modifications, suppressions (métrique métier) \\
+\hline
+\end{tabularx}
 \end{table}
 
 Un \emph{Counter} ne fait que monter, une \emph{Gauge} monte et descend, un \emph{Histogram} range
@@ -36,16 +40,18 @@ Trois règles d'alerte sont chargées ; en fonctionnement normal, elles sont tou
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}lXl@{}}
-\toprule
-\textbf{Alerte} & \textbf{Condition} & \textbf{Durée} \\
-\midrule
-\texttt{ApiIndisponible} & la cible ne répond plus (\texttt{up == 0}) & 30 s \\
-\texttt{TauxErreursServeurEleve} & plus de 5 \% d'erreurs serveur & 1 min \\
-\texttt{LatenceP95Elevee} & p95 au-dessus de 500 ms & 2 min \\
-\bottomrule
-\end{tabularx}
 \caption{Règles d'alerte (\texttt{monitoring/prometheus/alert\_rules.yml})}
+\begin{tabularx}{\linewidth}{|l|X|l|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Alerte}} & \textcolor{white}{\textbf{Condition}} & \textcolor{white}{\textbf{Durée}} \\
+\hline
+\texttt{ApiIndisponible} & la cible ne répond plus (\texttt{up == 0}) & 30 s \\
+\hline
+\texttt{TauxErreursServeurEleve} & plus de 5 \% d'erreurs serveur & 1 min \\
+\hline
+\texttt{LatenceP95Elevee} & p95 au-dessus de 500 ms & 2 min \\
+\hline
+\end{tabularx}
 \end{table}
 
 \capture{hamidou_05_prometheus_alertes.png}{Prometheus : les trois règles d'alerte, inactives}{fig:prom-alertes}

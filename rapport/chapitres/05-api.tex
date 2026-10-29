@@ -20,21 +20,27 @@ stable entre les chargements, contrairement à un identifiant technique de base.
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}l l X@{}}
-\toprule
-\textbf{Méthode} & \textbf{Route} & \textbf{Comportement principal} \\
-\midrule
-GET & \texttt{/api/transactions} & Liste filtrée, paginée et triée ; renvoie les données et les métadonnées. \\
-GET & \texttt{/api/transactions/statistiques} & Agrégats par type et devise, avec les filtres de recherche. \\
-GET & \texttt{/api/transactions/\{reference\}} & Détail d'une transaction. \\
-POST & \texttt{/api/transactions} & Création d'une transaction de source \texttt{API} ; réponse 201 et en-tête \texttt{Location}. \\
-PATCH & \texttt{/api/transactions/\{reference\}} & Modification partielle, après revalidation de l'objet complet. \\
-DELETE & \texttt{/api/transactions/\{reference\}} & Suppression ; réponse 204 en cas de succès. \\
-GET & \texttt{/api/rejets} et routes associées & Consultation des rejets, des statistiques par motif et du dernier chargement. \\
-\bottomrule
-\end{tabularx}
 \caption{Principales routes de l'API}
 \label{tab:routes-api}
+\begin{tabularx}{\linewidth}{|l|l|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Méthode}} & \textcolor{white}{\textbf{Route}} & \textcolor{white}{\textbf{Comportement principal}} \\
+\hline
+GET & \texttt{/api/transactions} & Liste filtrée, paginée et triée ; renvoie les données et les métadonnées. \\
+\hline
+GET & \texttt{/api/transactions/statistiques} & Agrégats par type et devise, avec les filtres de recherche. \\
+\hline
+GET & \texttt{/api/transactions/\{reference\}} & Détail d'une transaction. \\
+\hline
+POST & \texttt{/api/transactions} & Création d'une transaction de source \texttt{API} ; réponse 201 et en-tête \texttt{Location}. \\
+\hline
+PATCH & \texttt{/api/transactions/\{reference\}} & Modification partielle, après revalidation de l'objet complet. \\
+\hline
+DELETE & \texttt{/api/transactions/\{reference\}} & Suppression ; réponse 204 en cas de succès. \\
+\hline
+GET & \texttt{/api/rejets} et routes associées & Consultation des rejets, des statistiques par motif et du dernier chargement. \\
+\hline
+\end{tabularx}
 \end{table}
 
 \section{Filtres, pagination et tri}
