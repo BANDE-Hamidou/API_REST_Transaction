@@ -1,0 +1,77 @@
+% Rédaction : KOUMTOUBRE Davy ; relecture : BADO Lionel
+\chapter{API REST de transactions}\label{chap:api}
+
+\section{Responsabilités et organisation}
+L'API expose les transactions conservées dans PostgreSQL et les résultats du chargement KNIME.
+Elle est construite avec Express~5 et séparée en couches afin que les routes ne portent ni les
+règles métier ni les détails SQL :
+\begin{enumerate}
+  \item les routes HTTP reçoivent la requête et choisissent le code de réponse ;
+  \item les modules de validation normalisent et contrôlent les entrées ;
+  \item le dépôt de transactions exécute les opérations sur PostgreSQL ;
+  \item un gestionnaire central transforme les erreurs en réponses JSON cohérentes.
+\end{enumerate}
+Cette séparation permet de tester les routes avec un dépôt en mémoire, puis de vérifier les
+requêtes SQL séparément contre PostgreSQL (chapitre~\ref{chap:tests}).
+
+\section{Routes et opérations}
+Les transactions utilisent leur référence métier \texttt{TXN-xxxxxx} dans l'URL. Cette clé reste
+stable entre les chargements, contrairement à un identifiant technique de base.
+
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\textbf{Méthode} & \textbf{Route} & \textbf{Comportement principal} \\
+\midrule
+GET & \texttt{/api/transactions} & Liste filtrée, paginée et triée ; renvoie les données et les métadonnées. \\
+GET & \texttt{/api/transactions/statistiques} & Agrégats par type et devise, avec les filtres de recherche. \\
+GET & \texttt{/api/transactions/\{reference\}} & Détail d'une transaction. \\
+POST & \texttt{/api/transactions} & Création d'une transaction de source \texttt{API} ; réponse 201 et en-tête \texttt{Location}. \\
+PATCH & \texttt{/api/transactions/\{reference\}} & Modification partielle, après revalidation de l'objet complet. \\
+DELETE & \texttt{/api/transactions/\{reference\}} & Suppression ; réponse 204 en cas de succès. \\
+GET & \texttt{/api/rejets} et routes associées & Consultation des rejets, des statistiques par motif et du dernier chargement. \\
+\bottomrule
+\end{tabularx}
+\caption{Principales routes de l'API}
+\label{tab:routes-api}
+\end{table}
+
+\section{Filtres, pagination et tri}
+La liste accepte des filtres par type, statut, canal, devise, catégorie, source, comptes, période et
+montant. Les filtres d'énumération peuvent recevoir plusieurs valeurs séparées par une virgule.
+Le paramètre \texttt{compte} recherche dans le compte source ou destination. La pagination utilise
+\texttt{page} et \texttt{limite} (20 par défaut, 100 au maximum). Le tri est limité à la date, au
+montant ou à la référence.
+
+Un tri secondaire par référence départage les lignes ayant la même valeur de tri. Les pages restent
+ainsi stables entre deux requêtes. Les paramètres inconnus ou invalides renvoient 400 au lieu d'être
+ignorés silencieusement : une faute de frappe ne peut donc pas élargir accidentellement la recherche.
+
+\section{Validation et réponses d'erreur}
+Les champs sont normalisés (espaces retirés, codes en majuscules), puis contrôlés selon le contrat
+commun décrit au chapitre~\ref{chap:donnees}. Les règles portent notamment sur les formats de
+référence et de compte, les valeurs autorisées, les dates réelles, les montants positifs et les
+cohérences entre champs. La catégorie de montant est calculée côté serveur. Les corps de requête
+inconnus sont refusés.
+
+Pour un \texttt{PATCH}, l'API fusionne les champs fournis avec la transaction existante, puis valide
+l'ensemble. Un virement ne peut ainsi pas perdre son compte destination tout en restant accepté.
+Les erreurs de validation sont regroupées par champ dans une réponse 400. Les principaux statuts
+sont 400 (entrée invalide), 404 (ressource absente), 409 (référence déjà utilisée), 503 (base
+indisponible) et 500 (erreur inattendue). Le format commun contient un code stable, un message et,
+si nécessaire, le détail des champs fautifs.
+
+\section{Sécurité des requêtes SQL}
+Les valeurs reçues du client sont toujours transmises à PostgreSQL par paramètres \texttt{\$1},
+\texttt{\$2}, etc. Elles ne sont pas concaténées au texte SQL. Comme les noms de colonnes ne
+peuvent pas être paramétrés, les champs de tri sont choisis dans une liste blanche. Cette approche
+réduit le risque d'injection SQL; elle ne remplace pas l'authentification ni les contrôles d'accès.
+
+\section{Vérification}
+Les tests unitaires couvrent la validation et la génération des requêtes paramétrées. Les tests
+HTTP utilisent Supertest et un dépôt en mémoire pour contrôler les codes, les filtres, la
+pagination, les écritures et les erreurs sans dépendre de PostgreSQL. Des tests d'intégration
+complètent cette couverture sur une vraie base, et la collection Postman vérifie les parcours de
+démonstration. Les résultats effectivement exécutés sont consignés dans le rapport de tests du
+projet.
