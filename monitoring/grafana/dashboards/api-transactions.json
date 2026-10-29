@@ -1,0 +1,173 @@
+{
+  "uid": "g5-api-transactions",
+  "title": "API Transactions - Groupe 5",
+  "description": "Requêtes, erreurs et temps de réponse de l'API REST de transactions (Express.js + prom-client)",
+  "tags": ["groupe5", "express", "transactions"],
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "version": 1,
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"] },
+  "templating": {
+    "list": [
+      {
+        "name": "route",
+        "label": "Route",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": { "query": "label_values(http_requests_total{job=\"api-transactions\"}, route)", "refId": "route" },
+        "definition": "label_values(http_requests_total{job=\"api-transactions\"}, route)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "API disponible",
+      "description": "up = 1 si Prometheus arrive à lire /metrics",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "max(up{job=\"api-transactions\"})", "instant": true }],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [{ "type": "value", "options": { "0": { "text": "HORS SERVICE", "color": "red" }, "1": { "text": "EN SERVICE", "color": "green" } } }],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        },
+        "overrides": []
+      },
+      "options": { "colorMode": "background", "graphMode": "none", "textMode": "value", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Requêtes / s",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(rate(http_requests_total{job=\"api-transactions\",route=~\"$route\"}[1m]))" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "color": { "mode": "fixed", "fixedColor": "text" } }, "overrides": [] },
+      "options": { "colorMode": "none", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Taux d'erreurs (5 min)",
+      "description": "Part des réponses 4xx et 5xx sur 5 minutes",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(rate(http_request_errors_total{job=\"api-transactions\",route=~\"$route\"}[5m])) / clamp_min(sum(rate(http_requests_total{job=\"api-transactions\",route=~\"$route\"}[5m])), 1e-9)" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit", "decimals": 1, "noValue": "0",
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.05 }, { "color": "red", "value": 0.2 }] }
+        },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Latence p95",
+      "description": "95 % des requêtes répondent en moins de ce temps (5 min)",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api-transactions\",route=~\"$route\"}[5m])))" }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s", "decimals": 3,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 0.25 }, { "color": "red", "value": 0.5 }] }
+        },
+        "overrides": []
+      },
+      "options": { "colorMode": "value", "graphMode": "area", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 5, "type": "stat", "title": "Écritures sur la période",
+      "description": "Créations, modifications et suppressions réussies via l'API",
+      "gridPos": { "h": 4, "w": 5, "x": 16, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (operation) (increase(transactions_operations_total{job=\"api-transactions\"}[$__range]))", "legendFormat": "{{operation}}", "instant": true }],
+      "fieldConfig": { "defaults": { "unit": "none", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "text" } }, "overrides": [] },
+      "options": { "colorMode": "none", "graphMode": "none", "textMode": "value_and_name", "orientation": "horizontal", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 6, "type": "stat", "title": "En cours",
+      "gridPos": { "h": 4, "w": 3, "x": 21, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(http_requests_in_flight{job=\"api-transactions\"})" }],
+      "fieldConfig": { "defaults": { "unit": "none", "decimals": 0, "color": { "mode": "fixed", "fixedColor": "text" } }, "overrides": [] },
+      "options": { "colorMode": "none", "graphMode": "none", "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Requêtes par seconde, par route",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (method, route) (rate(http_requests_total{job=\"api-transactions\",route=~\"$route\"}[1m]))", "legendFormat": "{{method}} {{route}}" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Erreurs par seconde, par code HTTP",
+      "description": "4xx = erreur du client (validation, 404, 409), 5xx = erreur du serveur (base indisponible...)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (status_code, error_type) (rate(http_request_errors_total{job=\"api-transactions\",route=~\"$route\"}[1m]))", "legendFormat": "{{status_code}} ({{error_type}})" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+    },
+    {
+      "id": 9, "type": "timeseries", "title": "Temps de réponse : p50, p95, p99",
+      "description": "Quantiles calculés à partir de l'histogramme http_request_duration_seconds",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api-transactions\",route=~\"$route\"}[1m])))", "legendFormat": "p50" },
+        { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api-transactions\",route=~\"$route\"}[1m])))", "legendFormat": "p95" },
+        { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api-transactions\",route=~\"$route\"}[1m])))", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+    },
+    {
+      "id": 10, "type": "bargauge", "title": "Temps de réponse moyen par route (5 min)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (route) (rate(http_request_duration_seconds_sum{job=\"api-transactions\",route=~\"$route\"}[5m])) / sum by (route) (rate(http_request_duration_seconds_count{job=\"api-transactions\",route=~\"$route\"}[5m]))", "legendFormat": "{{route}}", "instant": true }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s", "decimals": 4, "min": 0,
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        },
+        "overrides": []
+      },
+      "options": { "orientation": "horizontal", "displayMode": "basic", "showUnfilled": true, "reduceOptions": { "calcs": ["lastNotNull"] } }
+    },
+    {
+      "id": 11, "type": "piechart", "title": "Répartition des codes HTTP (période)",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (status_code) (increase(http_requests_total{job=\"api-transactions\",route=~\"$route\"}[$__range]))", "legendFormat": "{{status_code}}", "instant": true }],
+      "fieldConfig": { "defaults": { "unit": "none", "decimals": 0 }, "overrides": [] },
+      "options": { "pieType": "donut", "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] }, "reduceOptions": { "calcs": ["lastNotNull"] }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "Mémoire résidente du processus Node.js",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "process_resident_memory_bytes{job=\"api-transactions\"}", "legendFormat": "mémoire" }],
+      "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "lineWidth": 2, "fillOpacity": 10, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "showLegend": false }, "tooltip": { "mode": "single" } }
+    },
+    {
+      "id": 13, "type": "timeseries", "title": "Latence de la boucle d'événements (p99)",
+      "description": "Un pic indique que le processus Node.js est bloqué par un calcul",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 20 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "nodejs_eventloop_lag_p99_seconds{job=\"api-transactions\"}", "legendFormat": "event loop p99" }],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
+      "options": { "legend": { "showLegend": false }, "tooltip": { "mode": "single" } }
+    }
+  ]
+}
