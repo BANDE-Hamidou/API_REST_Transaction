@@ -1,0 +1,84 @@
+% =============================================================================
+% Préambule du rapport. Compatible pdfLaTeX, XeLaTeX, LuaLaTeX et Tectonic.
+% =============================================================================
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{lmodern}
+\else
+  \usepackage{fontspec}
+\fi
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+
+% --- Chapitres compacts : pas de saut de page ni de grand titre ----------------
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{\par\bigskip}{}{}
+\makeatother
+\titleformat{\chapter}[hang]{\Large\bfseries\color{bleuibam}}{\thechapter.}{0.6em}{}
+\titlespacing*{\chapter}{0pt}{1.2em}{0.8em}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{bleuibam}{HTML}{1F4E79}
+\definecolor{gristexte}{HTML}{555555}
+\definecolor{fondcode}{HTML}{F5F5F5}
+\definecolor{orangeafaire}{HTML}{B45309}
+
+% --- En-têtes et pieds de page -------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gristexte}Groupe 5 SIE, thème 6}
+\fancyhead[R]{\small\color{gristexte}API REST de transactions}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Extraits de terminal et de code -------------------------------------------
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{fondcode},
+  frame=single, rulecolor=\color{gray!40},
+  breaklines=true, columns=fullflexible, keepspaces=true,
+  showstringspaces=false, upquote=true,
+  literate={é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {à}{{\`a}}1 {ç}{{\c{c}}}1
+           {ù}{{\`u}}1 {ô}{{\^o}}1 {î}{{\^i}}1 {É}{{\'E}}1 {«}{{\guillemotleft}}1
+           {»}{{\guillemotright}}1 {→}{{$\rightarrow$}}1
+}
+\renewcommand{\lstlistingname}{Extrait}
+
+% --- \capture{fichier}{légende}{étiquette} -------------------------------------
+% Insère une capture de figures/. Tant que le fichier n'existe pas, un cadre
+% indique la capture à faire : le rapport compile à tout moment.
+\newcommand{\capture}[3]{%
+  \begin{figure}[H]
+    \centering
+    \IfFileExists{figures/#1}{%
+      \includegraphics[width=0.9\linewidth,height=0.42\textheight,keepaspectratio]{figures/#1}%
+    }{%
+      \fbox{\parbox[c][2.6cm][c]{0.85\linewidth}{\centering\color{orangeafaire}
+        Capture à insérer : \texttt{\detokenize{figures/#1}}\\[2pt]
+        \small\color{gristexte}(liste des captures : figures/LISEZMOI.txt)}}%
+    }
+    \caption{#2}
+    \label{#3}
+  \end{figure}}
+
+% --- \afaire{texte} : passage à compléter par l'équipe --------------------------
+\newcommand{\afaire}[1]{{\color{orangeafaire}\textbf{[À compléter]} #1}}
+
+\setlength{\parskip}{0.4em}
+\setlength{\emergencystretch}{2.5em}

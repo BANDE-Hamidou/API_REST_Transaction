@@ -1,0 +1,99 @@
+% Rédaction : BANDE Hamidou ; relecture : BADO Lionel
+\chapter{Architecture et choix techniques}\label{chap:architecture}
+
+\section{Vue d'ensemble}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.3cm and 1.9cm,
+  b/.style={draw=bleuibam, rounded corners=2pt, align=center, font=\small, minimum height=1cm, text width=2.5cm, fill=white},
+  f/.style={-{Stealth[length=2mm]}, thick, gray!70!black},
+  l/.style={font=\scriptsize, gray!30!black, align=center}]
+  \node[b] (gen) {Générateur\\ \scriptsize Node.js};
+  \node[b, right=of gen] (knime) {KNIME\\ \scriptsize poste local};
+  \node[b, right=of knime] (load) {Chargeur\\ \scriptsize idempotent};
+  \node[b, below=1.5cm of load] (db) {PostgreSQL 16};
+  \node[b, left=of db] (api) {API Express~5\\ \scriptsize Node.js 22};
+  \node[b, left=of api] (cli) {Clients\\ \scriptsize Postman, tests};
+  \node[b, below=1.6cm of api] (prom) {Prometheus};
+  \node[b, right=of prom] (graf) {Grafana};
+  \draw[f] (gen) -- node[l, above]{CSV brut} (knime);
+  \draw[f] (knime) -- node[l, above]{2 CSV} (load);
+  \draw[f] (load) -- node[l, right]{INSERT \ldots{} ON CONFLICT} (db);
+  \draw[f] (api) -- node[l, above]{SQL\\paramétré} (db);
+  \draw[f] (cli) -- node[l, above]{HTTP\\JSON} (api);
+  \draw[f] (prom) -- node[l, right]{lit /metrics\\toutes les 5 s} (api);
+  \draw[f] (graf) -- node[l, above]{PromQL} (prom);
+  \begin{scope}[on background layer]
+    \node[draw=gray!60, dashed, rounded corners, fit=(db)(api)(prom)(graf), inner sep=0.35cm,
+          label={[font=\scriptsize, gray]south:Docker Compose}] {};
+  \end{scope}
+\end{tikzpicture}
+\caption{Architecture de la chaîne}
+\label{fig:architecture}
+\end{figure}
+
+KNIME est une application de bureau : il tourne hors de Docker, sur le poste chargé de l'ETL. Les
+quatre autres services sont décrits dans \texttt{docker-compose.yml}. Le dossier \texttt{data/} est
+monté en lecture seule dans le conteneur de l'API : KNIME y écrit, le chargeur y lit.
+
+\section{Composants et justification}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
+\toprule
+\textbf{Composant} & \textbf{Rôle} & \textbf{Pourquoi ce choix} \\
+\midrule
+Générateur (Node.js) & transactions fictives et anomalies contrôlées & déterministe (graine 2026) : toute l'équipe a les mêmes données \\
+KNIME (exigé) & normaliser, contrôler, dédoublonner, enrichir & workflow visuel, explicable nœud par nœud \\
+Oracle ETL (Node.js) & résultat attendu des règles KNIME & permet de \emph{prouver} que la sortie KNIME est juste \\
+PostgreSQL 16 & stockage & contraintes \texttt{CHECK}, transactions, \texttt{ON CONFLICT}, index \\
+Express.js 5 (exigé) & API REST & transmet les erreurs des fonctions asynchrones au gestionnaire d'erreurs \\
+prom-client 15 & exposition de \texttt{/metrics} & bibliothèque de référence pour Node.js \\
+Prometheus (exigé) & collecte et alertes & modèle \emph{pull} : l'API ne dépend pas de Prometheus \\
+Grafana (exigé) & tableau de bord & provisionné par fichiers : aucun clic, installation reproductible \\
+Jest, Supertest, Newman & tests & pas d'interface web, donc des outils de test d'API (exigence E6) \\
+\bottomrule
+\end{tabularx}
+\caption{Composants, rôles et justification}
+\end{table}
+
+\section{Organisation du code de l'API}
+\begin{table}[H]
+\centering\small
+\begin{tabularx}{\linewidth}{@{}lX@{}}
+\toprule
+\textbf{Dossier ou fichier} & \textbf{Contenu} \\
+\midrule
+\texttt{server.js}, \texttt{app.js}, \texttt{config.js} & démarrage, arrêt propre, assemblage d'Express, variables d'environnement \\
+\texttt{domain/rules.js} & règles métier : valeurs autorisées, formats, catégories de montant \\
+\texttt{validation/} & validation des corps (POST, PATCH) et des paramètres de requête \\
+\texttt{repositories/} & accès à PostgreSQL ; \texttt{queryBuilder} produit le SQL paramétré \\
+\texttt{routes/} & transactions, rejets, chargements \\
+\texttt{metrics/metrics.js} & compteurs, histogramme et middleware de mesure \\
+\texttt{middleware/errorHandler.js} & format d'erreur unique (400, 404, 409, 503, 500) \\
+\texttt{scripts/load-csv.js} & chargement des sorties KNIME \\
+\bottomrule
+\end{tabularx}
+\caption{Organisation de \texttt{api/src}}
+\end{table}
+
+Les routes ne parlent qu'à une \emph{interface} de dépôt de données. En production, c'est
+PostgreSQL ; dans les tests, un dépôt en mémoire de même interface. On teste ainsi le HTTP sans
+base, puis le SQL séparément.
+
+\section{Ports}
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Service} & \textbf{Sur le poste} & \textbf{Dans le réseau Docker} \\
+\midrule
+API & \texttt{http://localhost:3000} & \texttt{api:3000} \\
+PostgreSQL & \texttt{localhost:5432} & \texttt{postgres:5432} \\
+Prometheus & \texttt{http://localhost:9090} & \texttt{prometheus:9090} \\
+Grafana & \texttt{http://localhost:3001} & \texttt{grafana:3000} \\
+\bottomrule
+\end{tabular}
+\caption{Ports des services (modifiables dans \texttt{.env})}
+\end{table}

@@ -1,0 +1,95 @@
+% Rédaction : BANDE Hamidou ; relecture : SOMBIE Roseline
+\chapter{Données et base PostgreSQL}\label{chap:donnees}
+
+\section{Des données fictives, piégées exprès}
+Le générateur produit 1000 transactions et ajoute 10 doublons de référence, soit 1010 lignes.
+\begin{itemize}
+  \item programme : \texttt{data/scripts/generate-transactions.js} ;
+  \item fichier produit : \texttt{data/raw/transactions\_brutes.csv} ;
+  \item liste des anomalies injectées : \texttt{data/raw/anomalies\_injectees.json}.
+\end{itemize}
+Il utilise une graine fixe (2026) : relancé sur n'importe quel poste, il redonne exactement le même
+fichier. Le résultat attendu de l'ETL est donc connu à la ligne près.
+
+Une chaîne de contrôle qui ne reçoit que des données propres ne prouve rien. Le générateur injecte
+donc deux sortes d'anomalies, chacune listée avec le motif attendu :
+\begin{itemize}
+  \item \textbf{54 anomalies bloquantes} : la donnée est absente, fausse ou ambiguë (montant négatif,
+        devise \texttt{FCFA}, date impossible, référence mal formée\ldots). La ligne est rejetée avec un motif ;
+  \item \textbf{26 anomalies corrigeables} : l'intention est certaine (minuscules, espaces, virgule
+        décimale, séparateur de milliers, date au format français). La ligne est corrigée puis acceptée.
+\end{itemize}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Catégorie} & \textbf{Lignes} \\
+\midrule
+Lignes brutes & 1010 \\
+\quad dont doublons de référence & 10 \\
+\quad dont anomalies bloquantes & 54 \\
+\quad dont anomalies corrigeables (acceptées après correction) & 26 \\
+\midrule
+Lignes valides attendues & 946 \\
+Lignes rejetées attendues (54 + 10) & 64 \\
+\bottomrule
+\end{tabular}
+\caption{Composition du jeu de données}
+\end{table}
+
+Un ETL de référence écrit en JavaScript (\texttt{data/scripts/reference-etl.js}) applique les
+mêmes règles que KNIME et produit le résultat attendu dans \texttt{data/expected/}. Il sert
+d'oracle : le comparateur \texttt{npm run data:compare} confronte la sortie de KNIME à ce résultat,
+ligne par ligne (chapitre~\ref{chap:knime}).
+
+\section{Le schéma de la base}
+Le script \texttt{db/init/01\_schema.sql} est exécuté automatiquement par PostgreSQL à son premier
+démarrage. Il crée trois tables :
+\begin{itemize}
+  \item \texttt{transactions} : les transactions valides, venues de KNIME (\texttt{source = 'KNIME'}) ou de l'API (\texttt{source = 'API'}) ;
+  \item \texttt{transactions\_rejetees} : les lignes rejetées, stockées en texte brut avec leur \texttt{motif\_rejet} ;
+  \item \texttt{chargements} : le journal de chaque chargement (lignes lues, insérées, mises à jour, rejetées).
+\end{itemize}
+
+\capture{hamidou_01_schema.png}{Les trois tables créées au démarrage de PostgreSQL}{fig:schema}
+
+La table \texttt{transactions} porte les règles métier sous forme de contraintes : format de la
+référence (\texttt{\^{}TXN-[0-9]\{6\}\$}) et des comptes, valeurs autorisées pour le type, la devise,
+le statut et le canal, \texttt{montant > 0}, compte destination obligatoire pour un virement et
+différent du compte source. Six index accélèrent les filtres de l'API (date, type, statut, comptes,
+montant).
+
+Ces contraintes sont une \textbf{dernière barrière} : même un \texttt{INSERT} écrit à la main est refusé.
+
+\capture{hamidou_02_insert_refuse.png}{Un montant négatif est refusé par la contrainte \texttt{transactions\_montant\_check}}{fig:insert-refuse}
+
+\section{Trois barrières de qualité}
+\begin{enumerate}
+  \item \textbf{KNIME} applique toutes les règles et motive chaque rejet ;
+  \item \textbf{le chargeur} revalide chaque ligne « valide » avec les règles de l'API ; une ligne
+        refusée à ce stade est enregistrée avec le motif \texttt{REJET\_CHARGEMENT} (cela ne doit pas arriver) ;
+  \item \textbf{PostgreSQL} refuse toute ligne qui viole une contrainte.
+\end{enumerate}
+
+\section{Un chargement idempotent et transactionnel}
+Le chargeur \texttt{api/src/scripts/load-csv.js} lit les deux fichiers produits par KNIME et les
+charge dans \textbf{une seule transaction SQL} : soit tout est chargé, soit rien. Il utilise
+\texttt{INSERT \ldots{} ON CONFLICT (reference) DO UPDATE} : relancer le chargement met à jour les
+lignes existantes au lieu de créer des doublons. Une transaction créée par l'API n'est jamais
+écrasée par un rechargement KNIME.
+
+\capture{hamidou_03_idempotence.png}{Deuxième chargement : aucune insertion, 946 mises à jour, 64 rejets}{fig:idempotence}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{Chargement} & \textbf{Insérées} & \textbf{Mises à jour} & \textbf{Rejetées} \\
+\midrule
+1\textsuperscript{er} passage & 946 & 0 & 64 \\
+2\textsuperscript{e} passage & 0 & 946 & 64 \\
+\bottomrule
+\end{tabular}
+\caption{Idempotence du chargement (poste de BANDE, 28/10/2026)}
+\end{table}
