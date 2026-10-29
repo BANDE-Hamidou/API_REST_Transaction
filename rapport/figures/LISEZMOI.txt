@@ -5,10 +5,10 @@ Fichier                          Qui       Ce qu'elle montre
 hamidou_01_schema.png            BANDE     \dt : les 3 tables                                    (fait)
 hamidou_02_insert_refuse.png     BANDE     INSERT avec montant -5 refusé par la contrainte CHECK (fait)
 hamidou_03_idempotence.png       BANDE     2e chargement : inserees 0, mises_a_jour 946          (fait)
-knime_01_workflow.png            SOMBIE    workflow complet, tous les nœuds verts
-knime_02_noeud9.png              SOMBIE    règles du nœud 9 (Rule Engine)
-knime_03_rejets_par_motif.png    SOMBIE    sortie du nœud 23 : 18 motifs, total 64
-knime_04_conforme.png            SOMBIE    npm run data:compare -> CONFORME
+knime_01_workflow.png            SOMBIE    workflow complet, tous les nœuds verts   (fait)
+knime_02_noeud9.png              SOMBIE    règles du nœud 9 (Rule Engine)   (fait)
+knime_03_rejets_par_motif.png    SOMBIE    sortie du nœud 23 : 18 motifs, total 64   (fait)
+knime_04_conforme.png            SOMBIE    npm run data:compare -> CONFORME   (fait)
 davy_01_npm_test.png             KOUMTOUBRE  npm test -> 80 passed
 davy_02_integration.png          KOUMTOUBRE  npm run test:integration -> 9 passed
 davy_03_postman_runner.png       KOUMTOUBRE  Postman Runner 15/15
