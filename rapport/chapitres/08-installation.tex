@@ -17,18 +17,21 @@ Deux familles d'outils sont installées différemment :
 \section{Prérequis}
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}l l X@{}}
-\toprule
-\textbf{Outil} & \textbf{Version} & \textbf{Vérification} \\
-\midrule
-Node.js & 22 LTS ou plus & \texttt{node -v} \\
-Git (avec Git Bash) & 2.x & \texttt{git --version} \\
-Docker Desktop (WSL 2) & Compose v2 & \texttt{docker compose version}, puis \texttt{docker run --rm hello-world} \\
-KNIME Analytics Platform & 5.x & s'ouvre ; poste ETL seulement \\
-\bottomrule
-\end{tabularx}
 \caption{Outils à installer sur le poste}
 \label{tab:prerequis}
+\begin{tabularx}{\linewidth}{|l|l|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Outil}} & \textcolor{white}{\textbf{Version}} & \textcolor{white}{\textbf{Vérification}} \\
+\hline
+Node.js & 22 LTS ou plus & \texttt{node -v} \\
+\hline
+Git (avec Git Bash) & 2.x & \texttt{git --version} \\
+\hline
+Docker Desktop (WSL 2) & Compose v2 & \texttt{docker compose version}, puis \texttt{docker run --rm hello-world} \\
+\hline
+KNIME Analytics Platform & 5.x & s'ouvre ; poste ETL seulement \\
+\hline
+\end{tabularx}
 \end{table}
 
 Le script \texttt{scripts/verifier-prerequis.ps1} contrôle ces outils et les ports utilisés
@@ -51,57 +54,76 @@ $\rightarrow$ correction ». On ne passe à l'étape suivante que si le résulta
 
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}l X X@{}}
-\toprule
-\textbf{Besoin} & \textbf{Commande} & \textbf{Données} \\
-\midrule
-Arrêter & \texttt{scripts/arreter.ps1} & conservées \\
-Relancer & \texttt{scripts/demarrer.ps1} & conservées, pas de rechargement \\
-Tout remettre à zéro & \texttt{scripts/reinitialiser.ps1} & supprimées : recharger ensuite \\
-\bottomrule
-\end{tabularx}
 \caption{Arrêter, relancer, réinitialiser}
 \label{tab:cycle-vie}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Besoin}} & \textcolor{white}{\textbf{Commande}} & \textcolor{white}{\textbf{Données}} \\
+\hline
+Arrêter & \texttt{scripts/arreter.ps1} & conservées \\
+\hline
+Relancer & \texttt{scripts/demarrer.ps1} & conservées, pas de rechargement \\
+\hline
+Tout remettre à zéro & \texttt{scripts/reinitialiser.ps1} & supprimées : recharger ensuite \\
+\hline
+\end{tabularx}
 \end{table}
 
 \section{Pièges constatés sur les postes de l'équipe}
 \begin{table}[H]
 \centering\small
-\begin{tabularx}{\linewidth}{@{}X X@{}}
-\toprule
-\textbf{Symptôme} & \textbf{Cause et correction} \\
-\midrule
-\texttt{npm} échoue avec \texttt{Cannot find module \ldots jest.js} & chemin du projet contenant un espace, un accent ou \texttt{\&} ; utiliser un chemin simple comme \texttt{C:\textbackslash projets\textbackslash \ldots} \\
-\texttt{cd G:\textbackslash TPComposantWeb\textbackslash \ldots} : \emph{No such file or directory} dans Git Bash & Git Bash supprime les barres obliques inverses ; écrire \texttt{/g/TPComposantWeb/\ldots} \\
-L'export KNIME n'est pas dans le dépôt & KNIME propose par défaut le dossier personnel ; choisir \texttt{knime\textbackslash transactions\_etl.knwf} dans le dépôt \\
-Montants vides ou \texttt{?} dans KNIME & colonnes non forcées en texte dans le CSV Reader \\
-Le \emph{workspace} KNIME apparaît dans \texttt{git status} & le choisir hors du dépôt, par exemple \texttt{C:\textbackslash Users\textbackslash <nom>\textbackslash knime-workspace} \\
-\bottomrule
-\end{tabularx}
 \caption{Problèmes rencontrés et corrections}
 \label{tab:pieges-installation}
+\begin{tabularx}{\linewidth}{|X|X|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Symptôme}} & \textcolor{white}{\textbf{Cause et correction}} \\
+\hline
+\texttt{npm} échoue avec \texttt{Cannot find module \ldots jest.js} & chemin du projet contenant un espace, un accent ou \texttt{\&} ; utiliser un chemin simple comme \texttt{C:\textbackslash projets\textbackslash \ldots} \\
+\hline
+\texttt{cd G:\textbackslash TPComposantWeb\textbackslash \ldots} : \emph{No such file or directory} dans Git Bash & Git Bash supprime les barres obliques inverses ; écrire \texttt{/g/TPComposantWeb/\ldots} \\
+\hline
+L'export KNIME n'est pas dans le dépôt & KNIME propose par défaut le dossier personnel ; choisir \texttt{knime\textbackslash transactions\_etl.knwf} dans le dépôt \\
+\hline
+Montants vides ou \texttt{?} dans KNIME & colonnes non forcées en texte dans le CSV Reader \\
+\hline
+Le \emph{workspace} KNIME apparaît dans \texttt{git status} & le choisir hors du dépôt, par exemple \texttt{C:\textbackslash Users\textbackslash <nom>\textbackslash knime-workspace} \\
+\hline
+\end{tabularx}
 \end{table}
 
 \section{Test sur un poste neuf}
-Le guide est validé en le suivant seul, dans un dossier vide, par un membre qui n'a écrit aucun
-fichier Docker. Chaque blocage rencontré est corrigé dans le guide lui-même.
+Le guide est validé en le suivant pas à pas, dans un dossier vide, sur un clone neuf du dépôt et
+avec des volumes Docker neufs (base vide au départ). Faute de poste Windows vierge disponible avant
+la soumission, le test a été mené le 29/10/2026 sur le poste de BANDE (Linux), en suivant les
+commandes du \texttt{README.md}. Chaque blocage rencontré est noté avec sa correction.
 
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{Étape du guide} & \textbf{Résultat} & \textbf{Remarque} \\
-\midrule
-1--2 Node.js, Git, Docker Desktop & \afaire{} & \\
-3--4 Clonage, prérequis & \afaire{} & \\
-5--6 Pile Docker et services & \afaire{} & \\
-7 KNIME et \texttt{data:compare} & CONFORME & 946 valides, 64 rejetées (chapitre~\ref{chap:knime}) \\
-8 Chargement & \afaire{} & \\
-9 Tests & \afaire{} & \\
-\bottomrule
-\end{tabular}
-\caption{Déroulé du test d'installation (poste de SOMBIE)}
+\caption{Déroulé du test d'installation sur un clone neuf (poste de BANDE, 29/10/2026)}
 \label{tab:test-installation}
+\begin{tabularx}{\linewidth}{|l|X|r|}
+\hline
+\rowcolor{bluedark}\textcolor{white}{\textbf{Étape du guide}} & \textcolor{white}{\textbf{Résultat}} & \textcolor{white}{\textbf{Durée}} \\
+\hline
+1--2 Node.js, Git, Docker & Node.js 24.20, npm 11.19, Git 2.43, Docker 29.8 avec Compose v2 & < 1 s \\
+\hline
+3--4 Clonage, prérequis & clone dans un dossier vide ; \texttt{.env} créé depuis \texttt{.env.example} & 4 s \\
+\hline
+5--6 Pile Docker et services & 1\textsuperscript{er} essai refusé : port 5432 déjà utilisé ; avec \texttt{POSTGRES\_HOST\_PORT=5433}, 4 services démarrés, 3 volumes neufs, \texttt{/health/ready} OK & 9 s + 8 s \\
+\hline
+7 KNIME et \texttt{data:compare} & CONFORME : 946 valides, 64 rejetées (poste de SOMBIE, chapitre~\ref{chap:knime}) & -- \\
+\hline
+8 Chargement & base vide au départ ; 1\textsuperscript{er} passage 946 insérées, 64 rejets ; 2\textsuperscript{e} passage 0 insérée, 946 mises à jour & 2 s \\
+\hline
+9 Tests & \texttt{test:data} pass 9 ; \texttt{npx jest} 80 passed ; intégration 9 passed ; \texttt{test:e2e} pass 7 & 10 s \\
+\hline
+\end{tabularx}
 \end{table}
 
-\afaire{Durée totale de l'installation et blocages corrigés dans le guide, après le test sur poste neuf.}
+\textbf{Bilan.} Hors téléchargements, l'installation complète et la vérification prennent moins
+d'une minute. Les images Docker étaient déjà présentes sur le poste : sur une machine réellement
+neuve, leur premier téléchargement ajoute quelques minutes selon la connexion. Un seul blocage
+a été rencontré : le port 5432 déjà occupé par un PostgreSQL local. Il se corrige en changeant la
+seule ligne \texttt{POSTGRES\_HOST\_PORT} du fichier \texttt{.env}, comme l'indique le guide.
+L'étape KNIME n'a pas été rejouée sur ce poste (application de bureau, procédure distincte) : sa
+sortie, identique au résultat attendu, est vérifiée par \texttt{npm run data:compare}.
