@@ -1,0 +1,11 @@
+# Chargement automatique des tableaux de bord JSON du dossier monté
+apiVersion: 1
+providers:
+  - name: groupe5
+    folder: Groupe 5
+    type: file
+    disableDeletion: true
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

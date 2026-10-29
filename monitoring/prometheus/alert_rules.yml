@@ -1,0 +1,28 @@
+# Règles d'alerte (visibles dans Prometheus > Alerts). Aucune notification n'est
+# envoyée : il faudrait un Alertmanager, hors du périmètre demandé.
+groups:
+  - name: api-transactions
+    rules:
+      - alert: ApiIndisponible
+        expr: up{job="api-transactions"} == 0
+        for: 30s
+        labels: { severite: critique }
+        annotations:
+          resume: "L'API ne répond plus à Prometheus depuis 30 s"
+
+      - alert: TauxErreursServeurEleve
+        expr: |
+          sum(rate(http_request_errors_total{job="api-transactions",error_type="serveur"}[1m]))
+            / clamp_min(sum(rate(http_requests_total{job="api-transactions"}[1m])), 0.001) > 0.05
+        for: 1m
+        labels: { severite: majeure }
+        annotations:
+          resume: "Plus de 5 % des requêtes finissent en erreur 5xx (base indisponible ?)"
+
+      - alert: LatenceP95Elevee
+        expr: |
+          histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job="api-transactions"}[5m]))) > 0.5
+        for: 2m
+        labels: { severite: mineure }
+        annotations:
+          resume: "Le 95e centile du temps de réponse dépasse 500 ms"

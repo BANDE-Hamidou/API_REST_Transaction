@@ -1,0 +1,22 @@
+# Configuration Prometheus - Groupe 5 - Thème 6
+# Prometheus interroge (scrape) l'endpoint /metrics de l'API toutes les 5 secondes.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alert_rules.yml
+
+scrape_configs:
+  - job_name: api-transactions
+    scrape_interval: 5s
+    metrics_path: /metrics
+    static_configs:
+      # "api" = nom du service dans docker-compose.yml (réseau Docker interne)
+      - targets: ['api:3000']
+        labels:
+          environnement: demo
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
