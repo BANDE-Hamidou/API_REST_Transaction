@@ -26,10 +26,10 @@ Sources officielles : `PROJET_DEV_COMPOSANT_2026_IBAM.pdf` (consignes générale
 | # | Travail demandé | Réalisation | État |
 |---|---|---|---|
 | E1 | Générer des transactions bancaires fictives | `data/scripts/generate-transactions.js` : 1000 transactions + 10 doublons, 64 anomalies bloquantes, 26 corrigeables | ✅ testé |
-| E2 | Workflow KNIME pour contrôler et transformer | spécification nœud par nœud (`docs/KNIME_WORKFLOW.md`) + oracle + comparateur | ⚠ **à construire dans KNIME** |
+| E2 | Workflow KNIME pour contrôler et transformer | `knime/transactions_etl.knwf` (23 nœuds), documenté dans `docs/KNIME_WORKFLOW.md`, vérifié par l'oracle et le comparateur | ✅ testé : CONFORME, 946 valides, 64 rejetées |
 | E3 | API REST et ses filtres | 13 filtres, pagination, tri, CRUD, statistiques, rejets | ✅ testé |
 | E4 | Exposer les métriques de requêtes, d'erreurs et de temps de réponse | `http_requests_total`, `http_request_errors_total`, `http_request_duration_seconds` | ✅ testé |
-| E5 | Configurer Prometheus et Grafana | `monitoring/` provisionné automatiquement | ✅ testé hors Docker |
+| E5 | Configurer Prometheus et Grafana | `monitoring/` provisionné automatiquement | ✅ testé sous Docker (Linux et Windows) |
 | E6 | Cypress si interface web fournie ; sinon outil adapté aux tests API | pas d'interface web → Jest + Supertest, Newman (Postman), test E2E `node:test` | ✅ testé |
 
 ## 2. Hypothèses retenues (points non précisés par l'énoncé)
