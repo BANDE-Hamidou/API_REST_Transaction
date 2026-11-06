@@ -9,14 +9,14 @@ Sources officielles : `PROJET_DEV_COMPOSANT_2026_IBAM.pdf` (consignes générale
 
 | # | Exigence (texte officiel) | Où c'est couvert | État |
 |---|---|---|---|
-| G1 | Dépôt Git **public** | dépôt GitHub du groupe | ⚠ à vérifier : visibilité *Public* |
+| G1 | Dépôt Git **public** | dépôt GitHub du groupe (`BANDE-Hamidou/API_REST_Transaction`) | ✅ visibilité *Public* (vérifiée le 06/11/2026) |
 | G2 | Code source et fichiers de dépendances | `api/src`, `api/package.json` + `package-lock.json`, `data/scripts`, `package.json` | ✅ |
 | G3 | Scripts de création et d'initialisation des bases | `db/init/01_schema.sql` (auto), `api/src/scripts/load-csv.js`, `data/` | ✅ |
-| G4 | Configurations, workflows et contrats d'API | `docker-compose.yml`, `monitoring/`, `knime/` (workflow), `api/openapi.yaml`, `docs/CONTRATS.md` | ⚠ `knime/transactions_etl.knwf` à exporter depuis KNIME |
+| G4 | Configurations, workflows et contrats d'API | `docker-compose.yml`, `monitoring/`, `knime/` (workflow), `api/openapi.yaml`, `docs/CONTRATS.md` | ✅ (`knime/transactions_etl.knwf` fourni) |
 | G5 | README.md : architecture, prérequis, procédure d'installation | `README.md` + `docs/ARCHITECTURE.md`, `docs/INSTALLATION_WINDOWS.md` | ✅ |
 | G6 | Tests et résultats attendus | `api/tests`, `data/tests`, `tests/e2e`, `tests/postman`, `data/expected/`, `docs/RAPPORT_TESTS.md` | ✅ |
 | G7 | Présentation PowerPoint | support présenté à l'oral, conservé hors du dépôt | hors dépôt (choix de l'équipe) |
-| G8 | Installation reproductible sur machine neuve ; Docker Compose avec configs, volumes, données de test | `docker-compose.yml` (4 services, 3 volumes), `data/raw` versionné | ✅ ⚠ jamais exécuté sous Docker pendant la préparation (Docker absent) |
+| G8 | Installation reproductible sur machine neuve ; Docker Compose avec configs, volumes, données de test | `docker-compose.yml` (4 services, 3 volumes), `data/raw` versionné | ✅ exécuté sous Docker : Linux (BANDE, 29/10) et Windows 11 + Docker Desktop (SOMBIE, 06/11) |
 | G9 | Procédure distincte pour les outils à installation particulière | `docs/KNIME_WORKFLOW.md`, `docs/INSTALLATION_WINDOWS.md` § KNIME | ✅ |
 | G10 | Au moins un scénario fonctionnel réussi + un test de bout en bout de la chaîne principale | `tests/e2e/chaine-complete.test.js`, `docs/SCENARIO_DEMO.md` | ✅ |
 | G11 | Envoi à kyfadeloumar@gmail.com, objet `[PROJET_DEV_COMPOSANT_2026]` | action de l'équipe | ⬜ à faire |
