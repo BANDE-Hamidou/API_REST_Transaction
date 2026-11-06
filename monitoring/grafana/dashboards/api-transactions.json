@@ -115,7 +115,7 @@
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [{ "refId": "A", "expr": "sum by (status_code, error_type) (rate(http_request_errors_total{job=\"api-transactions\",route=~\"$route\"}[1m]))", "legendFormat": "{{status_code}} ({{error_type}})" }],
       "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "lineWidth": 2, "fillOpacity": 0, "showPoints": "never" } }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["sum", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
+      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }, "tooltip": { "mode": "multi", "sort": "desc" } }
     },
     {
       "id": 9, "type": "timeseries", "title": "Temps de réponse : p50, p95, p99",
