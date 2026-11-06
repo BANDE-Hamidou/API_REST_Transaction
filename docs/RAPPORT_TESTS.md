@@ -20,32 +20,35 @@ Les fichiers `prometheus.yml`, `alert_rules.yml`, la source de données et le ta
 
 ## 2. Résultats
 
-| # | Test | Commande | Résultat obtenu | Poste de préparation | Poste de l'équipe (à remplir) |
+Colonne « Poste de l'équipe » : poste Windows 11 Pro de SOMBIE, Docker Desktop 4.98 (moteur 29.9) installé le 06/11/2026,
+Node.js 24.16. Pile lancée avec les scripts PowerShell du dépôt, données chargées depuis la sortie KNIME (`data/processed`).
+
+| # | Test | Commande | Résultat obtenu | Poste de préparation | Poste de l'équipe |
 |---|---|---|---|---|---|
-| T1 | Tests des données et des règles KNIME (miroir JS) | `npm run test:data` | `pass 9, fail 0` | ✅ | ⬜ |
+| T1 | Tests des données et des règles KNIME (miroir JS) | `npm run test:data` | `pass 9, fail 0` | ✅ | ✅ SOMBIE 06/11 |
 | T2 | Génération déterministe | `npm run data:generate` | 1010 lignes ; 64 rejets attendus ; 26 corrigeables | ✅ | ⬜ |
 | T3 | ETL de référence | `npm run data:reference` | 946 valides, 64 rejetées, 18 motifs | ✅ | ⬜ |
-| T4 | Tests unitaires + API (Jest, Supertest, dépôt en mémoire) | `cd api; npm test` | `Tests: 9 skipped, 80 passed, 89 total` | ✅ | ⬜ |
-| T5 | Tests d'intégration PostgreSQL 16 réel | `npm run test:integration` (`TEST_DATABASE_URL` défini) | `Tests: 9 passed` | ✅ | ⬜ |
+| T4 | Tests unitaires + API (Jest, Supertest, dépôt en mémoire) | `cd api; npm test` | `Tests: 9 skipped, 80 passed, 89 total` | ✅ | ✅ SOMBIE 06/11 |
+| T5 | Tests d'intégration PostgreSQL 16 réel | `npm run test:integration` (`TEST_DATABASE_URL` défini) | `Tests: 9 passed` | ✅ | ✅ SOMBIE 06/11 |
 | T6 | Couverture de code API | `npm run test:coverage` (avec base) | 93,05 % instructions · 86,25 % branches · 91,86 % fonctions | ✅ | ⬜ |
 | T7 | Chargement + idempotence | `node src/scripts/load-csv.js ../data/expected` × 2 | 946 insérées / 64 rejets, puis 0 insérée / 946 mises à jour | ✅ | ⬜ |
 | T8 | Syntaxe de la configuration Prometheus | `promtool check config` / `check rules` | `SUCCESS` ; 3 règles | ✅ | ⬜ |
 | T9 | Les 15 requêtes PromQL du tableau de bord | requêtes envoyées à Prometheus 2.55.1 après trafic | 15/15 acceptées, toutes renvoient des séries | ✅ | ⬜ |
-| T10 | Provisioning Grafana | Grafana 11.4.0 avec les fichiers du dépôt | source `prometheus` + tableau de bord `g5-api-transactions` créés automatiquement | ✅ | ⬜ |
-| T11 | **Test de bout en bout** (7 étapes) | `npm run test:e2e` | `pass 7, fail 0, skipped 0` | ✅ | ⬜ |
-| T12 | Collection Postman | `newman run …` | 15 requêtes, 15 assertions, 0 échec | ✅ | ⬜ |
+| T10 | Provisioning Grafana | Grafana 11.4.0 avec les fichiers du dépôt | source `prometheus` + tableau de bord `g5-api-transactions` créés automatiquement | ✅ | ✅ SOMBIE 06/11 (tableau de bord chargé automatiquement) |
+| T11 | **Test de bout en bout** (7 étapes) | `npm run test:e2e` | `pass 7, fail 0, skipped 0` | ✅ | ✅ SOMBIE 06/11 |
+| T12 | Collection Postman | `newman run …` | 15 requêtes, 15 assertions, 0 échec | ✅ | ✅ SOMBIE 06/11 |
 | T13 | Panne réelle de PostgreSQL | arrêt de PostgreSQL pendant que l'API tourne | `/health` 200, `/health/ready` 503, `/api/transactions` 503 `BASE_INDISPONIBLE` ; retour à 200 **sans redémarrer l'API** ; 503 comptés `error_type="serveur"` | ✅ | 🖐 (`docker compose stop postgres`) |
-| T14 | Cohérence entre composants | `npm run check` | tous les contrôles réussis, sauf `.knwf` signalé « A FAIRE » | ✅ | ⬜ |
+| T14 | Cohérence entre composants | `npm run check` | tous les contrôles réussis, sauf `.knwf` signalé « A FAIRE » | ✅ | ✅ SOMBIE 06/11 (`.knwf` présent : tous OK) |
 | T15 | Validation du fichier PowerPoint | — | support de l'oral conservé hors du dépôt | — | — |
 | T16 | Règles KNIME documentées (simulation JS de la sémantique Rule Engine) | script de simulation | 956/54 puis 946/10 ; 0 écart de champ ; motifs identiques | ✅ (simulation, **pas** KNIME) | — |
-| T17 | **Workflow KNIME réel** | exécution dans KNIME + `npm run data:compare` | — | ⬜ **KNIME absent** | 🖐 Roseline |
-| T18 | **`docker compose up -d --build`** | `scripts\demarrer.ps1` | — | ⬜ **Docker absent** | 🖐 tous |
-| T19 | Build de l'image API (`Dockerfile`, `npm ci`) | inclus dans T18 | — | ⬜ | 🖐 |
-| T20 | Healthchecks Docker (`pg_isready`, `wget /health`) | `docker compose ps` → `(healthy)` | — | ⬜ | 🖐 |
-| T21 | Scripts PowerShell (`demarrer`, `charger-donnees`, `arreter`, `reinitialiser`, `tester-tout`) | exécution réelle | analyse syntaxique PowerShell 5.1 sans erreur ; **non exécutés** (ils pilotent Docker) | ⬜ | 🖐 |
-| T22 | Chargement **via le conteneur** (`docker compose exec api npm run load -- /data/processed`) | `scripts\charger-donnees.ps1` | — | ⬜ | 🖐 |
+| T17 | **Workflow KNIME réel** | exécution dans KNIME + `npm run data:compare` | — | ⬜ **KNIME absent** | ✅ SOMBIE 29/10 (CONFORME, revérifié le 06/11) |
+| T18 | **`docker compose up -d --build`** | `scripts\demarrer.ps1` | — | ⬜ **Docker absent** | ✅ SOMBIE 06/11 (Docker Desktop 4.98, 4 conteneurs) |
+| T19 | Build de l'image API (`Dockerfile`, `npm ci`) | inclus dans T18 | — | ⬜ | ✅ SOMBIE 06/11 |
+| T20 | Healthchecks Docker (`pg_isready`, `wget /health`) | `docker compose ps` → `(healthy)` | — | ⬜ | ✅ SOMBIE 06/11 (`postgres` et `api` *healthy*) |
+| T21 | Scripts PowerShell (`demarrer`, `charger-donnees`, `arreter`, `reinitialiser`, `tester-tout`) | exécution réelle | analyse syntaxique PowerShell 5.1 sans erreur ; **non exécutés** (ils pilotent Docker) | ⬜ | ✅ SOMBIE 06/11 (`demarrer`, `charger-donnees`, `tester-tout` : 4 REUSSI) |
+| T22 | Chargement **via le conteneur** (`docker compose exec api npm run load -- /data/processed`) | `scripts\charger-donnees.ps1` | — | ⬜ | ✅ SOMBIE 06/11 (946 insérées, 0 rejet au chargement) |
 | T23 | Installation sur machine neuve en suivant le README | — | — | ⬜ | 🖐 un membre qui n'a pas participé |
-| T24 | Affichage visuel du tableau de bord Grafana | navigateur | requêtes vérifiées (T9) mais rendu des panneaux **non regardé** | ⬜ | 🖐 Lionel |
+| T24 | Affichage visuel du tableau de bord Grafana | navigateur | requêtes vérifiées (T9) mais rendu des panneaux **non regardé** | ⬜ | ✅ SOMBIE 06/11 (captures `roseline_01` et `roseline_02`) |
 
 Aucun résultat de cette page n'est estimé : chaque ✅ correspond à une commande réellement exécutée le 28/10/2026.
 

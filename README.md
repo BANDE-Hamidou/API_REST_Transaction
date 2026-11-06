@@ -133,6 +133,6 @@ rapport/             rapport du projet (LaTeX : `tectonic main.tex` ou Overleaf)
 
 - **Fait et testé** : générateur et règles, workflow KNIME (`knime/transactions_etl.knwf`, sortie `CONFORME : 946 valides, 64 rejetées`), schéma PostgreSQL, chargeur idempotent, API Express, métriques, Prometheus et Grafana, tests, documentation, rapport, présentation.
 - **Résultats obtenus sous Docker** (poste de BANDE, 28-29/10/2026) : `npm run test:data` pass 9 ; `npx jest` 80 passed ; `npm run test:integration` 9 passed ; Newman 15/15 ; `npm run test:e2e` pass 7. Détail : [`docs/RAPPORT_TESTS.md`](docs/RAPPORT_TESTS.md).
-- **Reste à vérifier** : les scripts PowerShell (`scripts/*.ps1`) sur un poste Windows avec Docker.
+- **Vérifié sous Windows avec Docker Desktop** (poste de SOMBIE, 06/11/2026) : `demarrer.ps1`, `charger-donnees.ps1` et `tester-tout.ps1` (4 REUSSI) ; intégration 9 passed ; Newman 15/15 ; E2E pass 7 ; tableau de bord Grafana et cible Prometheus UP (`docs/captures/roseline_*.png`).
 
 Données entièrement fictives. Aucun secret réel : `.env.example` ne contient que des valeurs de développement.
