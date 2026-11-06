@@ -2,7 +2,7 @@
 
 | Fichier | État |
 |---|---|
-| `transactions_etl.knwf` | **À CRÉER** par Roseline dans KNIME Analytics Platform 5.x, puis à exporter ici |
+| `transactions_etl.knwf` | **Fourni** : workflow de 23 nœuds réalisé par SOMBIE Roseline (KNIME Analytics Platform 5.x), sortie conforme |
 
 Instructions complètes, nœud par nœud : [`docs/KNIME_WORKFLOW.md`](../docs/KNIME_WORKFLOW.md).
 

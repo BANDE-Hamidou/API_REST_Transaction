@@ -2,11 +2,11 @@
 
 **Responsable : SOMBIE Roseline** · Étape 2 de l'exercice 6 : *« Construire un workflow KNIME pour contrôler et transformer les données »*
 
-> **État honnête du livrable.** Le fichier `knime/transactions_etl.knwf` **n'est pas fourni** : un workflow KNIME
-> ne peut être produit et vérifié que dans KNIME Analytics Platform, qui n'était pas installé sur le poste
-> de préparation. Ce document décrit **nœud par nœud** le workflow à construire. Le résultat attendu est
-> connu à la ligne près (`data/expected/`) et la commande `npm run data:compare` vérifie automatiquement
-> que la sortie de KNIME est correcte.
+> **État du livrable.** Le workflow est **fourni** : [`knime/transactions_etl.knwf`](../knime/transactions_etl.knwf)
+> (23 nœuds, KNIME Analytics Platform 5.x). Sa sortie est **conforme** au résultat attendu
+> (`npm run data:compare` → `CONFORME : 946 valides, 64 rejetées`). Ce document décrit **nœud par nœud**
+> comment il est construit, pour pouvoir le relire, le reproduire ou le modifier. Captures :
+> `docs/captures/knime_01_workflow.png` à `knime_04_conforme.png`.
 
 ---
 
