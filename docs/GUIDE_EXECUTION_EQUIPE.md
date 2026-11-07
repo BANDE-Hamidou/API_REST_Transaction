@@ -153,6 +153,6 @@ Le test 2 compare automatiquement `data/processed` au résultat attendu quand le
 3. Envoyer le mail : à **kyfadeloumar@gmail.com**, objet **`[PROJET_DEV_COMPOSANT_2026]`**, contenu : groupe 5 SIE, thème 6, membres, lien du dépôt public ; le rapport est dans le dossier `rapport/`.
 
 ### 🛑 Point d'arrêt n° 3 : prêt à présenter
-- [ ] dépôt **public** accessible en navigation privée (non connecté)
-- [ ] mail envoyé
+- [x] dépôt **public** accessible en navigation privée (non connecté)
+- [x] mail envoyé
 - [ ] le jour J : Docker Desktop lancé **avant** l'oral, pile démarrée, données chargées, onglets ouverts (`SCENARIO_DEMO.md` § 1)

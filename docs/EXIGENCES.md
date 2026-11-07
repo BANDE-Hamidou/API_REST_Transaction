@@ -19,17 +19,17 @@ Sources officielles : `PROJET_DEV_COMPOSANT_2026_IBAM.pdf` (consignes générale
 | G8 | Installation reproductible sur machine neuve ; Docker Compose avec configs, volumes, données de test | `docker-compose.yml` (4 services, 3 volumes), `data/raw` versionné | ✅ exécuté sous Docker : Linux (BANDE, 29/10) et Windows 11 + Docker Desktop (SOMBIE, 06/11) |
 | G9 | Procédure distincte pour les outils à installation particulière | `docs/KNIME_WORKFLOW.md`, `docs/INSTALLATION_WINDOWS.md` § KNIME | ✅ |
 | G10 | Au moins un scénario fonctionnel réussi + un test de bout en bout de la chaîne principale | `tests/e2e/chaine-complete.test.js`, `docs/SCENARIO_DEMO.md` | ✅ |
-| G11 | Envoi à kyfadeloumar@gmail.com, objet `[PROJET_DEV_COMPOSANT_2026]` | action de l'équipe | ⬜ à faire |
+| G11 | Envoi à kyfadeloumar@gmail.com, objet `[PROJET_DEV_COMPOSANT_2026]` | action de l'équipe | ✅ envoyé |
 
 ### 1.2 Exercice 6 : API REST de transactions avec Express.js, KNIME et Prometheus/Grafana
 
 | # | Travail demandé | Réalisation | État |
 |---|---|---|---|
 | E1 | Générer des transactions bancaires fictives | `data/scripts/generate-transactions.js` : 1000 transactions + 10 doublons, 64 anomalies bloquantes, 26 corrigeables | ✅ testé |
-| E2 | Workflow KNIME pour contrôler et transformer | spécification nœud par nœud (`docs/KNIME_WORKFLOW.md`) + oracle + comparateur | ⚠ **à construire dans KNIME** |
+| E2 | Workflow KNIME pour contrôler et transformer | `knime/transactions_etl.knwf` (23 nœuds), documenté dans `docs/KNIME_WORKFLOW.md`, vérifié par l'oracle et le comparateur | ✅ testé : CONFORME, 946 valides, 64 rejetées |
 | E3 | API REST et ses filtres | 13 filtres, pagination, tri, CRUD, statistiques, rejets | ✅ testé |
 | E4 | Exposer les métriques de requêtes, d'erreurs et de temps de réponse | `http_requests_total`, `http_request_errors_total`, `http_request_duration_seconds` | ✅ testé |
-| E5 | Configurer Prometheus et Grafana | `monitoring/` provisionné automatiquement | ✅ testé hors Docker |
+| E5 | Configurer Prometheus et Grafana | `monitoring/` provisionné automatiquement | ✅ testé sous Docker (Linux et Windows) |
 | E6 | Cypress si interface web fournie ; sinon outil adapté aux tests API | pas d'interface web → Jest + Supertest, Newman (Postman), test E2E `node:test` | ✅ testé |
 
 ## 2. Hypothèses retenues (points non précisés par l'énoncé)
